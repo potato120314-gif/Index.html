@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BuildBot Lab - Sign up or Log in</title>
+<style>
+:root{--bg:#f2f8fd;--card:#fff;--text:#10243a;--muted:#52687d;--c1:#1d6fe0;--c2:#16a05c;--line:rgba(16,36,58,.16);--sh:0 10px 30px rgba(10,40,90,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1622;--card:#132131;--text:#e8f2fb;--muted:#9db3c6;--c1:#5aa9ff;--c2:#4fd18b;--line:rgba(232,242,251,.18);--sh:0 10px 30px rgba(0,0,0,.45);color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+.box{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);padding:26px}
+.logo{font-weight:800;font-size:1.1rem}.logo b{color:var(--c1)}
+h1{font-family:Georgia,serif;font-size:2rem;margin:10px 0 6px;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);margin:0 0 18px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;padding:11px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);font-size:1rem;cursor:pointer}
+.tab.on{background:var(--c1);border-color:var(--c1);color:#fff}
+label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:12px}
+input[type=text],input[type=email],input[type=password]{width:100%;margin-top:4px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:1rem}
+.chk{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--muted);margin-bottom:14px}
+button.go{width:100%;padding:14px;border:0;border-radius:12px;background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff;font-weight:800;font-size:1.05rem;cursor:pointer}
+button.go:disabled{opacity:.6}
+#msg{min-height:1.4em;margin:12px 0 0;font-weight:600;color:#d93a3a}#msg.ok{color:var(--c2)}
+.note{font-size:.78rem;color:var(--muted);margin-top:16px}
+form{display:none}form.on{display:block}
+.roles{display:flex;gap:8px;margin-bottom:14px}.role{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);font:inherit;cursor:pointer}.role.on{border-color:var(--c1);background:rgba(29,111,224,.14);font-weight:700}
+</style>
+</head>
+<body>
+<main class="box">
+<div class="logo">BuildBot <b>Lab</b></div>
+<h1>Welcome, maker</h1>
+<p class="sub">Create a free account to start learning AI, robotics, electronics, engineering, physics and math.</p>
+<div class="tabs"><button class="tab on" id="t1">Sign up</button><button class="tab" id="t2">Log in</button></div>
+
+<form id="f1" class="on" autocomplete="on">
+<div class="roles"><button type="button" class="role on" data-r="student">🎒 I'm a student</button><button type="button" class="role" data-r="teacher">🍎 I'm a teacher</button></div>
+<label>Your name<input type="text" id="sn" maxlength="40" autocomplete="name" required></label>
+<label>Email<input type="email" id="se" autocomplete="email" required></label>
+<label>Password (8+ characters, with a letter and a number)<input type="password" id="sp" autocomplete="new-password" required></label>
+<label>Confirm password<input type="password" id="sc" autocomplete="new-password" required></label>
+<button class="go" id="b1" type="submit">Create my account</button>
+</form>
+
+<form id="f2" autocomplete="on">
+<label>Email<input type="email" id="le" autocomplete="email" required></label>
+<label>Password<input type="password" id="lp" autocomplete="current-password" required></label>
+<div class="chk"><input type="checkbox" id="lr" checked> <span>Keep me logged in for 30 days</span></div>
+<button class="go" id="b2" type="submit">Log in</button>
+</form>
+
+<p id="msg" role="status"></p>
+<p class="note">Teachers can create classes and see progress that students choose to share. Students join with a link or code from their teacher.</p>
+<p class="note">Accounts are saved only in this browser on this device, and passwords are scrambled (hashed) before saving. Don't reuse a password from another site.</p>
+</main>
+<script>
+var KU='bbl_users',KS='bbl_session',msg=document.getElementById('msg');
+function say(t,ok){msg.textContent=t;msg.className=ok?'ok':''}
+function load(){try{return JSON.parse(localStorage.getItem(KU)||'{}')}catch(e){return {}}}
+function save(u){localStorage.setItem(KU,JSON.stringify(u))}
+function b64(u){return btoa(String.fromCharCode.apply(null,u))}
+function unb64(s){return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0)})}
+async function hash(pw,salt){var k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);
+  return b64(new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:salt,iterations:150000,hash:'SHA-256'},k,256)))}
+var role='student';document.querySelectorAll('.role').forEach(function(b){b.onclick=function(){role=b.dataset.r;document.querySelectorAll('.role').forEach(function(x){x.classList.toggle('on',x===b)})}});
+function start(email,name,keep,r){localStorage.setItem(KS,JSON.stringify({email:email,name:name,role:r||'student',exp:Date.now()+(keep?30:1)*864e5}));location.replace('index.html')}
+try{var cur=JSON.parse(localStorage.getItem(KS)||'null');if(cur&&cur.exp>Date.now())location.replace('index.html'+location.hash)}catch(e){}
+function tab(n){document.getElementById('t1').classList.toggle('on',n===1);document.getElementById('t2').classList.toggle('on',n===2);
+  document.getElementById('f1').classList.toggle('on',n===1);document.getElementById('f2').classList.toggle('on',n===2);say('')}
+document.getElementById('t1').onclick=function(){tab(1)};document.getElementById('t2').onclick=function(){tab(2)};
+document.getElementById('f1').addEventListener('submit',async function(e){e.preventDefault();
+  var n=document.getElementById('sn').value.trim(),em=document.getElementById('se').value.trim().toLowerCase(),p=document.getElementById('sp').value,c=document.getElementById('sc').value,b=document.getElementById('b1');
+  if(n.length<2)return say('Please enter your name.');
+  if(p.length<8||!/[A-Za-z]/.test(p)||!/\d/.test(p))return say('Password needs 8+ characters with a letter and a number.');
+  if(p!==c)return say('The passwords do not match.');
+  try{var u=load();if(u[em])return say('That email already has an account. Try logging in.');
+    b.disabled=true;say('Creating your account...',true);var salt=crypto.getRandomValues(new Uint8Array(16));
+    u[em]={name:n,role:role,salt:b64(salt),hash:await hash(p,salt)};save(u);start(em,n,true,role)}
+  catch(err){b.disabled=false;say('Could not save the account. Private browsing or blocked storage can cause this.')}});
+var fails=0,lock=0;
+document.getElementById('f2').addEventListener('submit',async function(e){e.preventDefault();
+  var em=document.getElementById('le').value.trim().toLowerCase(),p=document.getElementById('lp').value,b=document.getElementById('b2');
+  if(Date.now()<lock)return say('Too many tries. Wait a few seconds and try again.');
+  try{b.disabled=true;var a=load()[em],ok=false;
+    if(a)ok=(await hash(p,unb64(a.salt)))===a.hash;
+    if(ok){say('Welcome back!',true);start(em,a.name,document.getElementById('lr').checked,a.role)}
+    else{b.disabled=false;fails++;if(fails>=5){lock=Date.now()+10000;fails=0}say('Wrong email or password. Accounts are saved per device, so sign up first on this device.')}}
+  catch(err){b.disabled=false;say('Something went wrong. Please try again.')}});
+</script>
+</body>
+</html>

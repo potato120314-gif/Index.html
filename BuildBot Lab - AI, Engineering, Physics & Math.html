@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>BuildBot Lab - AI, Engineering, Physics & Math</title>
+<style>
+:root{--bg:#f2f8fd;--card:#ffffff;--text:#10243a;--muted:#52687d;--c1:#1d6fe0;--c2:#16a05c;--c3:#10b27a;--line:rgba(16,36,58,.14);--sh:0 6px 20px rgba(10,40,90,.08);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1622;--card:#132131;--text:#e8f2fb;--muted:#9db3c6;--c1:#5aa9ff;--c2:#4fd18b;--c3:#3ecf9e;--line:rgba(232,242,251,.16);--sh:0 6px 20px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1622;--card:#132131;--text:#e8f2fb;--muted:#9db3c6;--c1:#5aa9ff;--c2:#4fd18b;--c3:#3ecf9e;--line:rgba(232,242,251,.16);--sh:0 6px 20px rgba(0,0,0,.4);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;overflow-x:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:20px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+.logo{font-weight:800;letter-spacing:.5px}.logo b{color:var(--c1);text-shadow:0 0 12px var(--c1)}
+.pill{font-size:.75rem;border:1px solid var(--c3);color:var(--c3);padding:4px 10px;border-radius:99px;box-shadow:0 0 12px rgba(0,255,157,.35)}
+.pill:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c3);margin-right:6px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.2}}
+header{text-align:center;padding:60px 0 30px}
+h1{font-size:clamp(2.2rem,8vw,4.2rem);margin:0 0 10px;line-height:1.05;font-weight:900}
+.grad{background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c1));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+@keyframes flow{to{background-position:300% 0}}
+.type{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--c3);font-size:clamp(1rem,3.5vw,1.4rem);min-height:1.8em}
+.type:after{content:"▌";animation:pulse 1s infinite}
+p.lead{color:var(--muted);max-width:560px;margin:10px auto 24px;font-size:1.05rem}
+.btn{display:inline-block;color:#00131c;background:linear-gradient(90deg,var(--c1),var(--c3));padding:14px 26px;border-radius:12px;text-decoration:none;font-weight:800;box-shadow:0 0 24px rgba(0,229,255,.5);transition:transform .2s,box-shadow .2s}
+.btn:hover,.btn:active{transform:translateY(-3px) scale(1.03);box-shadow:0 0 40px rgba(0,229,255,.8)}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 18px;backdrop-filter:blur(8px)}
+.stat b{display:block;font-size:1.5rem;color:var(--c1)}.stat span{font-size:.8rem;color:var(--muted)}
+h2{margin:48px 0 14px;font-size:1.6rem}h2:before{content:"// ";color:var(--c1)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:10px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-size:.95rem;transition:.2s}
+.tab.on{background:linear-gradient(90deg,var(--c1),var(--c2));color:#fff;border-color:transparent;box-shadow:0 0 20px rgba(124,77,255,.6)}
+.step,.card,.calc{background:var(--card);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px)}
+.step{display:flex;gap:14px;padding:14px 16px;margin-bottom:10px;opacity:0;transform:translateY(16px);animation:up .45s forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.num{flex:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:0 0 14px var(--c1)}
+.step b{display:block}.step small{color:var(--muted);font-size:.93rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{padding:16px;transition:transform .25s,box-shadow .25s,border-color .25s}
+.card:hover{transform:translateY(-6px);border-color:var(--c1);box-shadow:0 10px 30px rgba(0,229,255,.25)}
+.card i{font-style:normal;font-size:1.6rem}.card h3{margin:6px 0 4px;font-size:1.05rem}.card p{margin:0;color:var(--muted);font-size:.92rem}
+.calc{padding:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.row label{flex:1;min-width:110px;font-size:.8rem;color:var(--muted)}
+input[type=number]{width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font-size:1rem}
+.out{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--c3);font-size:1.05rem;text-shadow:0 0 10px rgba(0,255,157,.5)}
+.chk label{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--c3)}
+.bar{height:12px;background:var(--line);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c1),var(--c3));box-shadow:0 0 14px var(--c1);transition:width .4s}
+#msg{color:var(--c3);font-weight:700;min-height:1.5em}
+footer{text-align:center;color:var(--muted);padding:44px 0 30px;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.step{opacity:1;transform:none}}
+
+.plaza{display:grid;gap:14px}
+.form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;backdrop-filter:blur(10px)}
+.form label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.form input[type=text],.form select,.form textarea{width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--text);font:inherit;font-size:1rem}
+.form textarea{min-height:90px;resize:vertical}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-size:.9rem}
+.chip.on{border-color:var(--c3);color:var(--c3);box-shadow:0 0 14px rgba(0,255,157,.35)}
+.post{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;backdrop-filter:blur(10px);transition:.25s}
+.post:hover{border-color:var(--c1);transform:translateY(-3px)}
+.post h3{margin:8px 0 6px;font-size:1.1rem}.post p{margin:0 0 10px;color:var(--muted);font-size:.93rem;word-break:break-word}
+.badge{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(29,111,224,.15);color:var(--c1)}
+.meta{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);flex-wrap:wrap}
+.meta img{width:22px;height:22px;border-radius:50%}
+.meta a{margin-left:auto;color:var(--c1);font-weight:700;text-decoration:none}
+.note{font-size:.82rem;color:var(--muted)}
+
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:8px;backdrop-filter:blur(10px)}
+summary{cursor:pointer;font-weight:700;color:var(--c1)}
+details p{margin:8px 0 0;color:var(--muted);font-size:.93rem}
+.lv{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.lv.Easy{background:rgba(0,255,157,.2);color:var(--c3)}.lv.Medium{background:rgba(255,193,7,.2);color:#ffc107}.lv.Hard{background:rgba(255,82,82,.2);color:#ff6b6b}
+
+body{background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+h1,h2{font-family:Georgia,"Iowan Old Style",serif}h2:before{content:""}
+.logo b{text-shadow:none;color:var(--c1)}.pill{box-shadow:none}.pill:before{background:var(--c3)}
+.grad{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent;animation:none}
+.type{font-family:Georgia,serif;font-style:italic;color:var(--c2)}
+.btn{background:var(--c1);color:#fff;box-shadow:var(--sh)}.btn:hover,.btn:active{box-shadow:0 10px 26px rgba(29,111,224,.35)}
+.tab.on{background:var(--c1);box-shadow:none;color:#fff}.num{background:var(--c2);box-shadow:none}
+.out{text-shadow:none;color:var(--c2)}.bar i{background:var(--c1);box-shadow:none}
+.step,.card,.calc,.post,.form,details,.chk label,.stat{box-shadow:var(--sh);backdrop-filter:none}
+.card:hover{box-shadow:0 12px 28px rgba(10,40,90,.15);border-color:var(--c1)}
+input[type=number],.form input[type=text],.form select,.form textarea{background:var(--bg);color:var(--text)}
+.chip.on{box-shadow:none}.stat b{color:var(--c1)}
+#sv{width:100%;touch-action:none;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);margin:6px 0}
+.pg rect{fill:var(--bg);stroke:var(--c2);stroke-width:2}.pg.sel rect{stroke:var(--c1);stroke-width:4}
+.pg text{text-anchor:middle;pointer-events:none;fill:var(--text)}.pg .lb{font-size:10px;fill:var(--muted)}
+.wl{stroke:var(--c1);stroke-width:3;stroke-linecap:round}
+
+.chatbox{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+.bub{padding:10px 14px;border-radius:14px;max-width:94%;font-size:.95rem;word-break:break-word}
+.bub.me{align-self:flex-end;background:var(--c1);color:#fff}.bub.ai{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
+.bub div+div{margin-top:8px}
+pre.code{margin:6px 0 0;padding:12px;border-radius:12px;background:#0d1b2a;color:#e8f2fb;overflow-x:auto;font-size:.82rem;line-height:1.45;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre}
+.cb{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--muted);margin-top:10px}
+.cb b{color:var(--text)}.cp{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;padding:4px 12px;cursor:pointer;font-size:.78rem}
+.crow{display:flex;gap:8px;margin-top:10px}.crow input{flex:1;margin:0!important;width:auto!important}
+.calc input[type=text]{width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:1rem}
+
+#bk{width:200px;max-width:100%}#bk .gl{fill:none;stroke:var(--muted);stroke-width:4;stroke-linecap:round}
+.bubble{fill:rgba(255,255,255,.9);animation:rise 2s linear infinite}@keyframes rise{from{transform:translateY(0);opacity:.9}to{transform:translateY(-100px);opacity:0}}
+.dot{animation:fadein .8s forwards}@keyframes fadein{from{opacity:0}}.flash{fill:#fff7b0;animation:pulse .5s infinite alternate}
+.rwrap{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;align-items:center}#rout{flex:1;min-width:220px;font-size:.95rem}
+.eq{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--c2);font-size:1.02rem;margin:4px 0 8px}
+
+.stage{position:relative;width:100%;height:340px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),var(--bg));margin:6px 0}
+.stage canvas{width:100%;height:100%;display:block;touch-action:none}
+.ov{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:14px;color:var(--text);font-weight:700;cursor:pointer;background:linear-gradient(transparent 60%,rgba(29,111,224,.25))}
+.fs .ov{display:none}
+.stu.fs{position:fixed;inset:0;z-index:1000;background:var(--bg);overflow:auto;padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.fs .stage{height:62vh}.xbtn{display:none;position:sticky;top:0;z-index:5;float:right;padding:8px 14px;border:0;cursor:pointer}.fs .xbtn{display:inline-block}
+.rs{flex:0 0 min(300px,100%);height:300px}.fs .rs{flex:1 1 100%;height:62vh}
+
+#orb{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:62px;height:62px;border-radius:50%;border:0;cursor:pointer;z-index:1200;color:#fff;font-weight:800;font-size:1.05rem;background:radial-gradient(circle at 30% 28%,#c8f5dc,#16a05c 38%,#1d6fe0 80%);box-shadow:0 8px 24px rgba(29,111,224,.45),inset -6px -8px 14px rgba(0,0,0,.25),inset 6px 6px 12px rgba(255,255,255,.35);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+#orb:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--c1);opacity:.5;animation:ring 2.4s infinite}
+@keyframes ring{from{transform:scale(.9);opacity:.6}to{transform:scale(1.4);opacity:0}}
+.coach{display:none}
+.coach.open{display:flex;flex-direction:column;position:fixed;inset:0;z-index:1100;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 14px calc(12px + env(safe-area-inset-bottom,0px));animation:pop .45s ease-out}
+@keyframes pop{from{clip-path:circle(0 at 92% 92%)}to{clip-path:circle(150% at 92% 92%)}}
+.chead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:1.15rem}
+.xbtn2{padding:8px 14px;border:0;cursor:pointer}
+.coach.open .form{flex:1;display:flex;flex-direction:column;min-height:0;box-shadow:none}
+.coach.open .chatbox{flex:1;max-height:none}
+body.coachopen #orb{display:none}
+
+.lstep{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}.lstep .go{margin-left:auto;align-self:center;color:var(--c1);font-weight:700;font-size:.85rem;white-space:nowrap}
+.lprog{margin-bottom:10px;color:var(--muted);font-size:.9rem}
+#lesson{display:none}
+#lesson.open{display:block;position:fixed;inset:0;z-index:1150;overflow:auto;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 14px calc(100px + env(safe-area-inset-bottom,0px));animation:pop .4s ease-out}
+.lin{max-width:760px;margin:0 auto}.lbar{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.lt{font-family:Georgia,serif;font-size:1.8rem;margin:6px 0 14px}.lc{margin-bottom:12px}.lc b{color:var(--c1)}.lc p{margin:6px 0 0}.lc.try{border-color:var(--c2)}.lc.try b{color:var(--c2)}
+.lbtns,.lnav{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.lbtns .btn{border:0;cursor:pointer}
+.opt{display:block;width:100%;text-align:left;margin-top:8px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;cursor:pointer}
+.opt.good{border-color:var(--c2);background:rgba(22,160,92,.18)}.opt.bad{border-color:#d93a3a;background:rgba(217,58,58,.15)}
+
+header{display:none}.wrap{max-width:1100px}
+.topnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);margin:8px 0 14px;overflow:hidden}
+.tn{flex:1;padding:10px 6px 8px;border:0;border-bottom:4px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tn span{font-size:1.5rem}.tn.on{color:var(--c1);border-bottom-color:var(--c1);font-weight:700}
+.pg{display:none}.pg.on{display:block;animation:fadein .3s}.pg>h2:first-child{margin-top:10px}
+.dtop{background:linear-gradient(135deg,var(--c2),var(--c1));border-radius:20px;padding:22px 20px 84px;color:#fff}
+.drow0{display:flex;align-items:center;gap:14px}.av{width:58px;height:58px;border-radius:50%;background:#fff;color:var(--c2);display:grid;place-items:center;font-size:1.8rem;font-weight:800;box-shadow:0 0 0 4px rgba(255,255,255,.4)}
+.hi{font-size:clamp(1.2rem,4vw,1.9rem)}.ask{margin-top:18px;border-left:6px solid rgba(255,255,255,.6);padding-left:12px;font-size:clamp(1.3rem,4vw,1.9rem)}
+.dgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;margin:-64px 8px 0;align-items:start}
+@media (max-width:760px){.dgrid{grid-template-columns:1fr;margin:-64px 0 0}}
+.dtabs{display:flex;gap:8px}.dt{flex:1;padding:14px 4px;font-size:.88rem!important;border:0;border-radius:14px 14px 0 0;background:var(--c2);color:#fff;font:inherit;font-size:1rem;cursor:pointer}.dt.on{background:var(--card);color:var(--c1);font-weight:700}
+.dbody{background:var(--card);border-radius:0 0 18px 18px;padding:14px;box-shadow:var(--sh);border:1px solid var(--line);border-top:0}
+.dbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.dbar select{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+.dcomp{display:flex;justify-content:space-between;align-items:center;background:rgba(22,160,92,.12);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.lrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--sh);cursor:pointer;font:inherit;color:inherit}
+.lrow:hover{border-color:var(--c1)}.lrow .st{color:#f5a623;font-size:1.3rem}.lrow .tt{color:var(--c1);font-weight:600;font-size:1.05rem}.lrow small{display:block;color:var(--muted)}.lrow .ic{margin-left:auto;font-size:1.3rem}
+.dside{background:var(--card);border-radius:18px;box-shadow:var(--sh);border:1px solid var(--line);padding:22px;text-align:center}
+.dside .big{font-size:3.4rem}.dside h3{margin:6px 0 8px;font-family:Georgia,serif;font-size:1.5rem}.dside p{color:var(--muted);margin:0 0 14px}.dside a{display:block;color:var(--c1);cursor:pointer;margin-bottom:14px;font-weight:600}
+.cta{width:100%;padding:16px;border:0;border-radius:12px;background:var(--c2);color:#fff;font:inherit;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:var(--sh)}
+.dtiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 8px}
+.dtile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;cursor:pointer;box-shadow:var(--sh);font:inherit;color:inherit}.dtile:hover{border-color:var(--c1)}.dtile span{display:block;font-size:2rem}
+
+.daily{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);border-radius:16px;padding:14px 16px}
+.daily b{display:block;font-size:1.2rem;margin:2px 0}.daily small{opacity:.95}.dright{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.streak{font-weight:700}
+.dgo{padding:12px 18px;border:0;border-radius:12px;background:#fff;color:#1d6fe0;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+
+.phead{background:linear-gradient(135deg,var(--c2),var(--c1));border-radius:20px;color:#fff;padding:22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}.pav{width:76px;height:76px;font-size:2.3rem}
+.pstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.pstat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh)}.pstat b{display:block;font-size:1.7rem;color:var(--c1)}.pstat small{display:block;color:var(--muted)}
+.pbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}.pbox h3{margin:0 0 10px}
+.wk{display:flex;gap:8px;align-items:flex-end;height:130px}.wk div{flex:1;text-align:center;font-size:.75rem;color:var(--muted)}.wk i{display:block;background:linear-gradient(var(--c1),var(--c2));border-radius:6px 6px 0 0;margin-bottom:4px}
+.frow{display:grid;grid-template-columns:140px 1fr 56px;gap:10px;align-items:center;margin:8px 0;font-size:.9rem}.frow .bar{margin:0}
+.set{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)}.set:first-of-type{border-top:0}
+.pinp{padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+.pbtn{padding:10px 16px;border:0;border-radius:10px;background:var(--c1);color:#fff;font:inherit;font-weight:700;cursor:pointer}.pbtn.red{background:#d93a3a}.pbtn.gray{background:var(--muted)}
+.prow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.prow:first-child{border-top:0}.prow .nm{flex:1;min-width:0;word-break:break-word}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><div class="logo">BuildBot <b>Lab</b></div><div class="pill">Makers welcome</div></nav>
+<header>
+<h1><span class="grad">Let's build something real</span></h1>
+<div class="type" id="type"></div>
+<p class="lead">Whether you're wiring your first LED or training your first model, you're in the right place. Explore AI, robotics, electronics, engineering, physics and math, then share what you make.</p>
+<a class="btn" href="#roadmap">Start tinkering →</a>
+<div class="stats">
+<div class="stat"><b data-n="4">0</b><span>Roadmaps</span></div>
+<div class="stat"><b data-n="4">0</b><span>Calculators</span></div>
+<div class="stat"><b data-n="9">0</b><span>Pro tools</span></div>
+</div>
+</header>
+
+<div id="coachbox" class="coach"><div class="chead"><b>🤖 Your AI coach</b><button class="btn xbtn2" id="cx">✕ Close</button></div>
+<div class="form">
+<div id="cmsg" class="chatbox" aria-live="polite"></div>
+<div class="chips" id="cchips"></div>
+<div class="crow"><input type="text" id="cin" maxlength="300" placeholder="Ask anything, or ask for code..."><button class="btn" id="csend" style="border:0;cursor:pointer;padding:10px 18px">Send</button></div>
+<p class="note" id="cmode"></p>
+</div></div>
+
+<h2 id="roadmap">Choose your engineer</h2>
+<p class="note" style="margin:-6px 0 12px">Pick a field, then tap any step to open its lesson. Your progress is saved to your account.</p>
+<div class="tabs" id="tabs"></div>
+<div id="steps"></div>
+
+<div id="studio" class="stu"><button class="btn xbtn" id="sx">✕ Close full screen</button>
+<h2 id="studio">Design Studio</h2>
+<p class="note" style="margin:-6px 0 12px">Sketch circuits, robots, logic gates, machines or structures in 3D. Tap the view to open it full screen. Drag empty space to rotate, pinch to zoom, tap a part button to add it, and drag parts to move them.</p>
+<div class="tabs" id="smode"></div>
+<p class="note" id="shint"></p>
+<div class="tabs" id="spal"></div>
+<div class="tabs" id="stool"></div>
+<div class="stage"><canvas id="sv3"></canvas><div class="ov" id="sov">⛶ Tap to open full screen 3D</div></div><svg id="sv" viewBox="0 0 600 380" style="display:none"></svg>
+<div class="out" id="scheck"></div>
+<div class="form" id="stest" style="display:none;margin-top:12px">
+<h3 style="margin:0 0 8px">⚖️ Weight test</h3>
+<label>Weight on each Load: <b id="wtv">500</b> kg<input type="range" id="wt" min="50" max="3000" step="50" value="500" style="width:100%;accent-color:var(--c1)"></label>
+<button class="btn" id="wtest" style="border:0;cursor:pointer;margin-right:8px">▶ Test it</button><button class="btn" id="wreset" style="border:0;cursor:pointer;background:var(--c2)">↩ Reset</button>
+<div id="wout" style="margin-top:10px;font-size:.95rem"></div>
+<p class="note">Strengths (kN): Foundation 100, Pillar 30, Wall 25, Anchor 20, Truss 14, Cable 10, Beam 8, Deck 6, Roof 2. Weight = mass × 9.81. This is a simplified model: load travels along connected parts and the weakest link sets the limit. Real engineers also check bending and buckling. More paths to the ground make a stronger structure.</p>
+</div>
+<div class="form" style="margin-top:12px">
+<label>Name your design<input type="text" id="sname" maxlength="60" placeholder="e.g. Night lamp board"></label>
+<button class="btn" id="ssave" style="border:0;cursor:pointer;margin-right:8px">💾 Save file</button>
+<button class="btn" id="sproj" style="border:0;cursor:pointer;margin-right:8px;background:var(--c3)">⭐ Save to my projects</button>
+<button class="btn" id="spub" style="border:0;cursor:pointer;background:var(--c2)">🚀 Share in Plaza</button>
+</div>
+
+</div>
+
+<div id="rlab" class="stu"><button class="btn xbtn" id="rx">✕ Close full screen</button>
+<h2 id="reactlab">Reaction Lab</h2>
+<p class="note" style="margin:-6px 0 12px">A virtual chemistry lab. Pick two substances, mix them, and see what happens. Real experiments need an adult, goggles and gloves.</p>
+<div class="form">
+<div class="row"><label>Substance A<select id="ra"></select></label><label>Substance B<select id="rb"></select></label></div>
+<button class="btn" id="rmix" style="border:0;cursor:pointer">🧪 Mix them</button>
+<div class="rwrap"><div class="stage rs"><canvas id="bk3"></canvas><div class="ov" id="rov">⛶ Tap to open full screen 3D</div></div><div id="rout">Choose two substances and tap Mix.</div></div>
+</div>
+
+</div>
+
+<h2>Mechanics calculators</h2>
+<div class="grid">
+<div class="calc"><h3 style="margin:0 0 10px">Gear ratio</h3><div class="row"><label>Driver teeth<input type="number" id="gt1" value="10" step="any"></label><label>Driven teeth<input type="number" id="gt2" value="30" step="any"></label><label>Input RPM<input type="number" id="grpm" value="300" step="any"></label></div><div class="out" id="o9"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">Lever balance</h3><div class="row"><label>Load (N)<input type="number" id="lv1" value="100" step="any"></label><label>Load arm (cm)<input type="number" id="lv2" value="20" step="any"></label><label>Effort arm (cm)<input type="number" id="lv3" value="80" step="any"></label></div><div class="out" id="o10"></div></div>
+</div>
+
+<h2>Circuit calculators</h2>
+<div class="grid">
+<div class="calc"><h3 style="margin:0 0 10px">Ohm's Law</h3>
+<div class="row"><label>Voltage (V)<input type="number" id="v" value="5" step="any"></label><label>Resistance (Ω)<input type="number" id="r" value="220" step="any"></label></div>
+<div class="out" id="o1"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">LED Resistor</h3>
+<div class="row"><label>Supply (V)<input type="number" id="vs" value="5" step="any"></label><label>LED (V)<input type="number" id="vf" value="2" step="any"></label><label>mA<input type="number" id="ma" value="20" step="any"></label></div>
+<div class="out" id="o2"></div></div>
+</div>
+
+<h2>Tools we love</h2>
+<div class="grid" id="tools"></div>
+
+<h2>Starter projects</h2>
+<div class="tabs" id="ptabs"></div>
+<div class="grid" id="projs"></div>
+
+<h2 id="hub">Science &amp; Engineering Hub</h2>
+<p class="note" style="margin:-6px 0 12px">Pick a field, read the big ideas, and try a hands-on project.</p>
+<div class="tabs" id="htabs"></div>
+<div id="hubl"></div>
+
+<h2>Physics &amp; math calculators</h2>
+<div class="grid">
+<div class="calc"><h3 style="margin:0 0 10px">Projectile motion</h3><div class="row"><label>Speed (m/s)<input type="number" id="pv" value="20" step="any"></label><label>Angle (°)<input type="number" id="pa" value="45" step="any"></label></div><div class="out" id="o5"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">Force &amp; energy</h3><div class="row"><label>Mass (kg)<input type="number" id="fm" value="2" step="any"></label><label>Accel (m/s²)<input type="number" id="fa" value="3" step="any"></label><label>Speed (m/s)<input type="number" id="fv" value="10" step="any"></label></div><div class="out" id="o6"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">Quadratic solver</h3><div class="row"><label>a<input type="number" id="qa" value="1" step="any"></label><label>b<input type="number" id="qb" value="-3" step="any"></label><label>c<input type="number" id="qc" value="2" step="any"></label></div><div class="out" id="o7"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">Quick statistics</h3><label style="font-size:.8rem;color:var(--muted)">Numbers (comma separated)<input type="text" id="sn" value="4, 8, 15, 16, 23, 42"></label><div class="out" id="o8" style="margin-top:10px"></div></div>
+</div>
+
+<h2 id="code">Code library</h2>
+<div class="tabs" id="ltabs"></div>
+<div id="lcode"></div>
+
+<h2>Key concepts</h2>
+<div id="gloss"></div>
+
+<h2>More calculators</h2>
+<div class="grid">
+<div class="calc"><h3 style="margin:0 0 10px">Resistors: series &amp; parallel</h3>
+<div class="row"><label>R1 (Ω)<input type="number" id="r1" value="100" step="any"></label><label>R2 (Ω)<input type="number" id="r2" value="220" step="any"></label></div>
+<div class="out" id="o3"></div></div>
+<div class="calc"><h3 style="margin:0 0 10px">Battery life</h3>
+<div class="row"><label>Battery (mAh)<input type="number" id="bc" value="2000" step="any"></label><label>Draw (mA)<input type="number" id="bd" value="250" step="any"></label></div>
+<div class="out" id="o4"></div></div>
+</div>
+
+<h2 id="plaza">Community Plaza</h2>
+<div class="plaza">
+<div class="form">
+<h3 style="margin:0 0 12px">Publish your model</h3>
+<label>Type<select id="pt"><option value="ai">🧠 AI Model</option><option value="robot">🤖 Robot</option><option value="circuit">⚡ Circuit</option><option value="logic">🔣 Logic</option><option value="mech">⚙️ Machine</option><option value="struct">🌉 Structure</option></select></label>
+<label>Title<input type="text" id="ptitle" maxlength="80" placeholder="e.g. Line-following robot"></label>
+<label>Description<textarea id="pdesc" maxlength="1500" placeholder="What does it do? How did you build it?"></textarea></label>
+<label>Link (optional)<input type="text" id="plink" placeholder="https://github.com/... or Tinkercad / Colab link"></label>
+<label>Parts or tools (optional)<input type="text" id="ptools" maxlength="200" placeholder="Arduino, ultrasonic sensor, PyTorch"></label>
+<button class="btn" id="pub" style="border:0;cursor:pointer">🚀 Publish to Plaza</button>
+<p class="note">Posts are public and shared through GitHub (free account needed). Never include passwords or private info.</p>
+</div>
+<div class="chips" id="pf"></div>
+<div id="feed" class="grid"></div>
+</div>
+
+<h2>Your project checklist</h2>
+<div class="chk" id="chk"></div>
+<div class="bar"><i id="fill"></i></div>
+<div id="msg">0% complete</div>
+
+<footer>BuildBot Lab · Made by makers, for makers 🤖</footer>
+</div>
+<button id="orb" aria-label="Open AI coach">AI</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var D={
+ai:["Define the problem|What should the model predict or decide? Write one clear sentence.","Collect and clean data|Gather examples, remove errors, split into train, validation and test.","Pick a model|Start simple, like a linear model or small neural net, before going big.","Train and evaluate|Watch for overfitting. Test on data the model never saw.","Deploy|Export the model and run it in an app, website or device."],
+robot:["Choose the job|Rolling car, robot arm or line follower? Keep the first one small.","Pick the brain|Arduino for simple control, Raspberry Pi or ESP32 for smarter robots.","Add sensors and motors|Ultrasonic, camera, IMU; DC motors, servos or steppers.","Wire and power safely|Use a motor driver and a separate battery for motors.","Program and test|Test each part alone, then combine into full behavior."],
+elec:["Learn the basics|Voltage, current, resistance and Ohm's law: V = I × R.","Know your components|Resistors, capacitors, diodes, LEDs, transistors, switches.","Build on a breadboard|Start with an LED and resistor circuit.","Measure with a multimeter|Check voltage and continuity before powering up.","Design a PCB|Draw it in KiCad (free), then order the board.","Stay safe|Use batteries or 5V. Never experiment with mains power."],
+both:["Give the robot eyes|Train an image or object-detection model on camera pictures.","Shrink the model|Use TFLite or ONNX so it runs on a Pi or edge board.","Connect output to action|Map predictions to motor commands, e.g. obstacle = turn left.","Test in simulation first|Try ideas in a simulator before risking real hardware."]};
+var N={ai:"🧠 AI Model",robot:"🤖 Robot",elec:"⚡ Electronics",both:"🚀 AI + Robot"};
+var T=[["🐍","PyTorch","Flexible Python library for training AI."],["📱","TensorFlow Lite","Run small models on phones and boards."],["🔌","Arduino / ESP32","Cheap boards for motors and sensors."],["🛰️","ROS 2","Standard framework for robot software."],["🎮","Gazebo / PyBullet","Free robot simulators to test safely."],["☁️","Google Colab","Free notebooks with GPUs for training."],["📐","KiCad","Free tool to draw circuits and PCBs."],["🧪","Tinkercad Circuits","Online circuit simulator, no risk."],["🔎","Multimeter","Measure voltage and check wiring."]];
+var tabs=document.getElementById('tabs'),steps=document.getElementById('steps');
+function show(k){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)});
+  steps.innerHTML=D[k].map(function(s,i){var p=s.split('|');return '<div class="step" style="animation-delay:'+(i*80)+'ms"><div class="num">'+(i+1)+'</div><div><b>'+p[0]+'</b><small>'+p[1]+'</small></div></div>'}).join('');
+}
+Object.keys(N).forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=N[k];b.onclick=function(){show(k)};tabs.appendChild(b)});
+show('ai');
+document.getElementById('tools').innerHTML=T.map(function(t){return '<div class="card"><i>'+t[0]+'</i><h3>'+t[1]+'</h3><p>'+t[2]+'</p></div>'}).join('');
+function f(x){return isFinite(x)?+x.toFixed(4):'?'}
+function ohm(){var v=+document.getElementById('v').value,r=+document.getElementById('r').value,i=v/r;
+  document.getElementById('o1').innerHTML='Current: '+f(i*1000)+' mA<br>Power: '+f(v*i*1000)+' mW'}
+function led(){var a=+document.getElementById('vs').value,b=+document.getElementById('vf').value,c=+document.getElementById('ma').value,r=(a-b)/(c/1000);
+  document.getElementById('o2').innerHTML=r>0?'Resistor: '+f(r)+' Ω<br>Use next size up (e.g. '+Math.ceil(r/10)*10+' Ω)':'Supply must be higher than LED voltage'}
+document.querySelectorAll('input[type=number]').forEach(function(e){e.addEventListener('input',function(){ohm();led()})});ohm();led();
+var L=["Idea written in one sentence","Parts or data collected","First simple version working","Tested and improved","Shared with the world"],chk=document.getElementById('chk');
+chk.innerHTML=L.map(function(x){return '<label><input type="checkbox"> '+x+'</label>'}).join('');
+chk.addEventListener('change',function(){var n=chk.querySelectorAll(':checked').length,p=Math.round(n/L.length*100);
+  document.getElementById('fill').style.width=p+'%';document.getElementById('msg').textContent=p===100?'🎉 You did it! Time to share it':p+'% complete'});
+var W=["AI models","robots","circuits","the future"],wi=0,ci=0,del=false,tp=document.getElementById('type');
+(function tick(){var w=W[wi];ci+=del?-1:1;tp.textContent="Today I'm building "+w.slice(0,ci);
+  var t=del?40:90;if(!del&&ci===w.length){del=true;t=1200}else if(del&&ci===0){del=false;wi=(wi+1)%W.length;t=300}setTimeout(tick,t)})();
+document.querySelectorAll('[data-n]').forEach(function(e){var n=+e.dataset.n,i=0,t=setInterval(function(){i++;e.textContent=i;if(i>=n)clearInterval(t)},180)});
+
+
+var OWNER='potato120314-gif',REPO='Index.html';
+var TY={ai:['AI Model','🧠'],robot:['Robot','🤖'],circuit:['Circuit','⚡'],logic:['Logic','🔣'],mech:['Machine','⚙️'],struct:['Structure','🌉']},posts=[],pfil='all',feed=document.getElementById('feed');
+function msg(t){feed.innerHTML='';var d=document.createElement('p');d.className='note';d.textContent=t;feed.appendChild(d)}
+function drawFeed(){
+  var list=posts.filter(function(p){return pfil==='all'||p.t===pfil});
+  if(!list.length){msg('No posts yet. Be the first to publish something!');return}
+  feed.innerHTML='';
+  list.forEach(function(p){
+    var c=document.createElement('div');c.className='post';
+    var b=document.createElement('span');b.className='badge';b.textContent=TY[p.t][1]+' '+TY[p.t][0];
+    var h=document.createElement('h3');h.textContent=p.title;
+    var d=document.createElement('p');d.textContent=p.snip;
+    var m=document.createElement('div');m.className='meta';
+    if(p.av){var im=document.createElement('img');im.src=p.av;im.alt='';im.onerror=function(){im.remove()};m.appendChild(im)}
+    var u=document.createElement('span');u.textContent=p.user+' · '+p.date+(p.likes?' · 👍 '+p.likes:'')+(p.cm?' · 💬 '+p.cm:'');m.appendChild(u);
+    var a=document.createElement('a');a.href=p.url;a.target='_blank';a.rel='noopener';a.textContent='View →';m.appendChild(a);
+    c.appendChild(b);c.appendChild(h);c.appendChild(d);c.appendChild(m);feed.appendChild(c)})
+}
+var pf=document.getElementById('pf');
+[['all','All']].concat(Object.keys(TY).map(function(k){return [k,TY[k][1]+' '+TY[k][0]]})).forEach(function(x){
+  var b=document.createElement('button');b.className='chip'+(x[0]==='all'?' on':'');b.textContent=x[1];
+  b.onclick=function(){pfil=x[0];document.querySelectorAll('.chip').forEach(function(e){e.classList.remove('on')});b.classList.add('on');drawFeed()};pf.appendChild(b)});
+function loadPlaza(){
+  msg('Loading community posts...');
+  fetch('https://api.github.com/repos/'+OWNER+'/'+encodeURIComponent(REPO)+'/issues?state=open&per_page=50')
+  .then(function(r){return r.json()}).then(function(a){
+    if(!Array.isArray(a))throw 0;
+    posts=[];a.forEach(function(i){
+      if(i.pull_request)return;
+      var m=/^\[(AI Model|Robot|Circuit|Logic|Machine|Structure)\]\s*/.exec(i.title||'');if(!m)return;
+      var t=Object.keys(TY).filter(function(k){return TY[k][0]===m[1]})[0];
+      posts.push({t:t,title:i.title.slice(m[0].length)||'Untitled',snip:(i.body||'').replace(/[#*`>]/g,'').slice(0,160),
+        user:i.user&&i.user.login||'anon',av:i.user&&i.user.avatar_url,date:(i.created_at||'').slice(0,10),
+        likes:i.reactions&&i.reactions['+1']||0,cm:i.comments||0,url:i.html_url})});
+    drawFeed()}).catch(function(){msg('Plaza posts load on the live GitHub site. If you see this there, check that Issues are turned on in your repo settings.')});
+}
+document.getElementById('pub').onclick=function(){
+  var t=document.getElementById('pt').value,ti=document.getElementById('ptitle').value.trim(),de=document.getElementById('pdesc').value.trim(),
+  li=document.getElementById('plink').value.trim(),to=document.getElementById('ptools').value.trim();
+  if(!ti||!de){alert('Please add a title and description.');return}
+  if(li&&!/^https?:\/\//i.test(li)){alert('Link must start with http:// or https://');return}
+  var body=de+(li?'\n\n**Link:** '+li:'')+(to?'\n\n**Parts/tools:** '+to:'');
+  window.open('https://github.com/'+OWNER+'/'+encodeURIComponent(REPO)+'/issues/new?title='+encodeURIComponent('['+TY[t][0]+'] '+ti)+'&body='+encodeURIComponent(body),'_blank','noopener');
+};
+
+D.ai.push("Improve the data first|Better, more varied data usually beats a bigger model.","Monitor after launch|Track mistakes in real use and retrain when things change.");
+D.robot.push("Add feedback control|Use sensor readings and PID so movement stays smooth and accurate.","Plan for failure|Add a stop button, limit switches and a low-battery cutoff.");
+D.elec.push("Switch with transistors|Use a transistor or MOSFET so a tiny signal controls a motor or lamp.","Control power with PWM|Pulse width modulation dims LEDs and sets motor speed.");
+show('ai');
+var PJ={ai:[["🧪","Spam detector","Classify messages as spam or not using text features.","Easy","Python, scikit-learn"],["✍️","Digit recognizer","Teach a small neural net to read handwritten numbers (MNIST).","Medium","PyTorch, Google Colab"],["📷","Camera object detector","Detect objects live from a camera feed on a small board.","Hard","YOLO, Raspberry Pi, USB camera"]],
+robot:[["➰","Line follower","A car that follows a black line using two sensors.","Easy","Arduino, IR sensors, 2 DC motors"],["🚧","Obstacle avoider","Drives around and turns when something blocks the way.","Medium","Ultrasonic sensor, motor driver"],["🦾","Mini robot arm","Four-joint arm you can program to pick up light objects.","Hard","4 servos, Arduino, 5V supply"]],
+elec:[["💡","Blinking LED","Your first circuit: blink an LED with a board or a 555 timer.","Easy","LED, 220Ω resistor, breadboard"],["🌙","Auto night lamp","A lamp that turns on when it gets dark.","Medium","LDR, transistor, LED, resistors"],["🔋","5V power supply","Turn a 9V battery into a steady 5V for your projects.","Medium","7805 regulator, 2 capacitors"]]};
+var PN={ai:"🧠 AI",robot:"🤖 Robot",elec:"⚡ Electronics"},pt=document.getElementById('ptabs'),pj=document.getElementById('projs');
+function showP(k){document.querySelectorAll('#ptabs .tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)});
+  pj.innerHTML=PJ[k].map(function(p){return '<div class="card"><i>'+p[0]+'</i><h3>'+p[1]+'<span class="lv '+p[3]+'">'+p[3]+'</span></h3><p>'+p[2]+'</p><p style="margin-top:8px;color:var(--c3)">Parts: '+p[4]+'</p></div>'}).join('')}
+Object.keys(PN).forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=PN[k];b.onclick=function(){showP(k)};pt.appendChild(b)});showP('ai');
+var G=[["Neural network","A model made of layers of simple units that learn patterns from examples, loosely inspired by the brain."],["Overfitting","When a model memorizes training data and fails on new data. Fix it with more data, simpler models or regularization."],["Training vs inference","Training teaches the model using data. Inference is using the trained model to make predictions."],["PID control","A feedback method that corrects error using proportional, integral and derivative terms to keep a robot steady."],["Servo vs stepper","A servo moves to an angle and holds it. A stepper moves in exact steps and is great for precise positioning."],["Degrees of freedom","The number of independent ways a robot can move. A 4-joint arm has 4."],["AC vs DC","DC flows one way (batteries). AC reverses direction (wall outlets). Beginners should stick to low-voltage DC."],["Capacitor","Stores a little electrical charge. Used to smooth power and filter noise."],["PWM","Switching power on and off very fast. The longer it stays on, the brighter the LED or faster the motor."]];
+document.getElementById('gloss').innerHTML=G.map(function(g){return '<details><summary>'+g[0]+'</summary><p>'+g[1]+'</p></details>'}).join('');
+function sp(){var a=+document.getElementById('r1').value,b=+document.getElementById('r2').value;
+  document.getElementById('o3').innerHTML='Series: '+f(a+b)+' Ω<br>Parallel: '+f(a*b/(a+b))+' Ω'}
+function bl(){var c=+document.getElementById('bc').value,d=+document.getElementById('bd').value,h=c/d*.8;
+  document.getElementById('o4').innerHTML='About '+f(h)+' hours<br>(with 80% real-world efficiency)'}
+['r1','r2','bc','bd'].forEach(function(i){document.getElementById(i).addEventListener('input',function(){sp();bl()})});sp();bl();
+
+var TT={n:-1,w:-1,m:"",tint:[]},WT=500;
+var SP={circuit:[["bat","🔋","Battery"],["sol","☀️","Solar"],["res","〰️","Resistor"],["pot","🎚️","Dial"],["cap","⏸️","Capacitor"],["dio","▶️","Diode"],["tr","🔀","Transistor"],["led","💡","LED"],["sw","🔘","Switch"],["btn","🔴","Button"],["fuse","🛡️","Fuse"],["buz","🔔","Buzzer"],["mic","🎤","Mic"],["sen","📡","Sensor"],["ic","🔲","Chip"],["mot","⚙️","Motor"],["gnd","⏚","Ground"],["wifi","📶","Wi-Fi"]],
+robot:[["brain","🧠","Controller"],["bat","🔋","Battery"],["drv","🔧","Driver"],["mot","⚙️","Motor"],["whl","🛞","Wheel"],["trk","⛓️","Tracks"],["srv","🦾","Servo arm"],["grp","🤏","Gripper"],["us","👁️","Distance"],["line","🛤️","Line"],["imu","🧭","Gyro"],["cam","📷","Camera"],["wifi","📶","Wi-Fi"],["spk","🔊","Speaker"],["led","💡","Light"]],
+logic:[["in","🔘","Input"],["and","∧","AND"],["or","∨","OR"],["not","¬","NOT"],["xor","⊕","XOR"],["nand","⊼","NAND"],["out","💡","Output"],["clk","⏱️","Clock"]],
+mech:[["gs","⚙️","Small gear"],["gb","⚙️","Big gear"],["gear","⚙️","Gear"],["axle","🔩","Axle"],["bear","⚪","Bearing"],["belt","➰","Belt"],["chain","⛓️","Chain"],["pul","🎡","Pulley"],["cam","🥚","Cam"],["crank","🔄","Crank"],["pist","🔽","Piston"],["fly","💿","Flywheel"],["spr","🌀","Spring"],["lev","📏","Lever"],["hinge","🚪","Hinge"],["brk","🛑","Brake"],["screw","🪛","Screw"],["fan","🌬️","Fan"],["hyd","💧","Hydraulic"],["valve","🚰","Valve"],["whl","🛞","Wheel"],["wt","⚖️","Weight"],["mot","🔌","Motor"]],
+struct:[["found","🟫","Foundation"],["pil","🏛️","Pillar"],["beam","➖","Beam"],["truss","🔺","Truss"],["cab","🪢","Cable"],["deck","🛣️","Deck"],["anch","⚓","Anchor"],["wall","🧱","Wall"],["roof","🏠","Roof"],["load","🚚","Load"]]};
+var HINT={circuit:"Wire a battery, switch, resistor and LED in a loop. Try adding a diode or fuse for protection.",robot:"Give your robot a brain, power, a motor driver, motors and sensors to see the world.",logic:"Inputs flow through gates to an output. NOT has one input; AND, OR, XOR and NAND have two.",mech:"Power a motor or crank, then connect gears, belts, cams and levers. A small gear driving a big gear trades speed for torque.",struct:"Start with a foundation, add pillars and beams, and use triangles (trusses) for strength. Add a Load, then run the Weight test."};
+var EX={circuit:{p:[["bat",100,190],["sw",200,90],["res",330,90],["led",460,190]],w:[[0,1],[1,2],[2,3],[3,0]]},
+robot:{p:[["bat",110,130],["brain",300,130],["drv",300,250],["mot",200,320],["mot",400,320],["us",480,130]],w:[[0,1],[1,2],[2,3],[2,4],[1,5],[0,2]]},
+logic:{p:[["in",100,110],["in",100,250],["and",300,180],["out",500,180]],w:[[0,2],[1,2],[2,3]]},
+mech:{p:[["mot",100,190],["gs",230,190],["gb",360,190],["whl",490,190]],w:[[0,1],[1,2],[2,3]]},
+struct:{p:[["found",120,320],["found",480,320],["pil",120,230],["pil",480,230],["beam",300,150],["truss",300,240],["load",300,70]],w:[[0,2],[1,3],[2,4],[3,4],[2,5],[3,5],[4,6],[5,6]]}};
+var SM={circuit:"🔌 Circuit",robot:"🤖 Robot",logic:"🔣 Logic gates",mech:"⚙️ Machine",struct:"🌉 Structure"},ST={move:"✋ Move",wire:"🔗 Wire",del:"🗑 Delete"};
+var SD={circuit:{p:[],w:[]},robot:{p:[],w:[]},logic:{p:[],w:[]},mech:{p:[],w:[]},struct:{p:[],w:[]}},mode='circuit',tool='move',sel=null,drag=null,nid=0,sv=document.getElementById('sv');
+function cur(){return SD[mode]}
+function lab(t){var r=SP[mode].filter(function(x){return x[0]===t})[0];return r||["","❓","?"]}
+function review(){var c=cur(),p=c.p,has=function(t){return p.some(function(q){return q.t===t})},cnt=function(t){return p.filter(function(q){return q.t===t}).length},
+  deg=function(i){return c.w.filter(function(x){return x[0]===i||x[1]===i}).length},m=[],inf=[];
+  if(!p.length)return 'Add a few parts to get started.';
+  if(mode==='circuit'){if(has('led')&&!has('res'))m.push('⚠️ An LED needs a resistor or it can burn out.');
+    if((has('led')||has('mot')||has('ic')||has('buz'))&&!has('bat')&&!has('sol'))m.push('⚠️ Add a battery or solar cell to power it.');
+    if(has('mot')&&!has('dio'))m.push('💡 A diode across a motor protects other parts from voltage spikes.')}
+  else if(mode==='robot'){if(!has('brain'))m.push('⚠️ Add a controller, the robot\'s brain.');if(!has('bat'))m.push('⚠️ Add a battery.');
+    if(cnt('mot')<2&&!has('trk'))m.push('💡 Most rovers use at least 2 motors.');if(has('mot')&&!has('drv'))m.push('💡 A motor driver protects your controller from motor current.')}
+  else if(mode==='logic'){if(!has('in'))m.push('⚠️ Add at least one Input.');if(!has('out'))m.push('⚠️ Add an Output light.');
+    p.forEach(function(q,i){if(['and','or','xor','nand'].indexOf(q.t)>-1&&deg(i)<3)m.push('⚠️ '+lab(q.t)[2]+' needs 2 inputs and 1 output wired.');if(q.t==='not'&&deg(i)<2)m.push('⚠️ NOT needs 1 input and 1 output wired.')})}
+  else if(mode==='mech'){if(!has('mot')&&!has('crank'))m.push('💡 Add a motor or crank to make it move.');
+    if(cnt('gear')===1)m.push('💡 One gear alone does little. Add a second to change speed or torque.');
+    if(c.w.some(function(x){var a=p[x[0]].t,b=p[x[1]].t;return (a==='gs'&&b==='gb')||(a==='gb'&&b==='gs')}))inf.push('⚙️ Small gear driving big gear: more torque, less speed.');
+    if(has('mot')&&!has('brk')&&has('whl'))inf.push('💡 Add a brake to stop safely.')}
+  else{if(!has('found'))m.push('⚠️ Every structure needs a foundation.');if(has('load')&&!has('beam')&&!has('deck'))m.push('⚠️ Add a beam or deck to carry the load.');
+    if(has('beam')&&cnt('pil')<2)m.push('💡 Beams usually need support at both ends.');if(has('beam')&&!has('truss'))m.push('💡 Triangles (trusses) make structures strong.')}
+  if(p.length>1&&c.w.length<p.length-1)m.push('🔗 Use Wire to connect your parts.');
+  return m.length?m.slice(0,3).join(' '):'✅ Looking good! '+p.length+' parts, '+c.w.length+' wires.'+(inf.length?' '+inf.join(' '):'')}
+function draw(){var c=cur(),h='<defs><pattern id="gp" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="var(--line)"/></pattern></defs><rect width="600" height="380" fill="url(#gp)"/>';
+  c.w.forEach(function(w,i){var a=c.p[w[0]],b=c.p[w[1]],t=(TT.m===mode&&TT.n===c.p.length&&TT.w===c.w.length)?TT.tint[i]:null,st=t==='brk'?' style="stroke:#e5484d;stroke-dasharray:4 7;opacity:.7"':t?' style="stroke:'+t+'"':'';if(a&&b)h+='<line class="wl" data-w="'+i+'"'+st+' x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'"/>'});
+  c.p.forEach(function(p,i){var l=lab(p.t);h+='<g class="pg'+(sel===i?' sel':'')+'" data-i="'+i+'"><rect x="'+(p.x-30)+'" y="'+(p.y-26)+'" width="60" height="52" rx="12"/><text x="'+p.x+'" y="'+(p.y+6)+'" font-size="22">'+l[1]+'</text><text class="lb" x="'+p.x+'" y="'+(p.y+21)+'">'+(p.t==='load'&&mode==='struct'?WT+' kg':l[2])+'</text></g>'});
+  sv.innerHTML=h;document.getElementById('scheck').textContent=review()}
+function pal(){var q=document.getElementById('spal');q.innerHTML='';SP[mode].forEach(function(x){var b=document.createElement('button');b.className='chip';b.textContent=x[1]+' '+x[2];
+  b.onclick=function(){var n=cur().p.length;cur().p.push({t:x[0],x:90+(n%6)*85,y:80+((n/6|0)%4)*80});draw()};q.appendChild(b)})}
+function modeUI(){document.querySelectorAll('#smode .tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===mode)});pal();sel=null;document.getElementById('shint').textContent=HINT[mode];document.getElementById('stest').style.display=mode==='struct'?'block':'none';draw()}
+Object.keys(SM).forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=SM[k];b.onclick=function(){mode=k;modeUI()};document.getElementById('smode').appendChild(b)});
+Object.keys(ST).forEach(function(k){var b=document.createElement('button');b.className='tab'+(k==='move'?' on':'');b.dataset.k=k;b.textContent=ST[k];
+  b.onclick=function(){tool=k;sel=null;document.querySelectorAll('#stool .tab').forEach(function(e){e.classList.toggle('on',e.dataset.k===k)});draw()};document.getElementById('stool').appendChild(b)});
+var cl=document.createElement('button');cl.className='tab';cl.textContent='Clear all';cl.onclick=function(){if(cur().p.length&&confirm('Clear this design?')){SD[mode]={p:[],w:[]};sel=null;draw()}};document.getElementById('stool').appendChild(cl);
+function svgPt(e){var p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(sv.getScreenCTM().inverse())}
+sv.addEventListener('pointerdown',function(e){var c=cur(),g=e.target.closest('.pg'),w=e.target.closest('.wl');
+  if(w&&tool==='del'){c.w.splice(+w.dataset.w,1);draw();return}
+  if(!g)return;var i=+g.dataset.i;
+  if(tool==='move'){var q=svgPt(e);drag={i:i,dx:c.p[i].x-q.x,dy:c.p[i].y-q.y};sv.setPointerCapture(e.pointerId)}
+  else if(tool==='wire'){if(sel===null)sel=i;else{if(sel!==i&&!c.w.some(function(x){return (x[0]===sel&&x[1]===i)||(x[0]===i&&x[1]===sel)}))c.w.push([sel,i]);sel=null}draw()}
+  else{c.p.splice(i,1);c.w=c.w.filter(function(x){return x[0]!==i&&x[1]!==i}).map(function(x){return [x[0]>i?x[0]-1:x[0],x[1]>i?x[1]-1:x[1]]});draw()}});
+sv.addEventListener('pointermove',function(e){if(!drag)return;var q=svgPt(e),p=cur().p[drag.i];p.x=Math.max(34,Math.min(566,Math.round((q.x+drag.dx)/10)*10));p.y=Math.max(30,Math.min(350,Math.round((q.y+drag.dy)/10)*10));draw()});
+sv.addEventListener('pointerup',function(){drag=null});
+function pack(){var c=cur();return {m:mode,p:c.p.map(function(q){return [q.t,q.x,q.y]}),w:c.w}}
+document.getElementById('ssave').onclick=function(){var n=(document.getElementById('sname').value.trim()||'my-design').replace(/[^\w-]+/g,'-'),
+  a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(pack())],{type:'application/json'}));a.download=n+'.json';a.click()};
+document.getElementById('spub').onclick=function(){var n=document.getElementById('sname').value.trim(),c=cur();
+  if(!n||!c.p.length){alert('Name your design and add at least one part first.');return}
+  var body='Designed in the BuildBot Lab Design Studio.\n\n'+review()+'\n\nParts: '+c.p.map(function(q){return lab(q.t)[2]}).join(', ')+'\n\n```json\n'+JSON.stringify(pack())+'\n```';
+  window.open('https://github.com/'+OWNER+'/'+encodeURIComponent(REPO)+'/issues/new?title='+encodeURIComponent('['+TY[mode][0]+'] '+n)+'&body='+encodeURIComponent(body),'_blank','noopener')};
+var CODE={
+blink:["Blink an LED","Arduino",`const int LED = 13;
+
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED, HIGH);  // on
+  delay(500);
+  digitalWrite(LED, LOW);   // off
+  delay(500);
+}`],
+fade:["Fade an LED with PWM","Arduino",`const int LED = 9;  // must be a PWM pin
+
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  for (int b = 0; b <= 255; b += 5) { analogWrite(LED, b); delay(20); }
+  for (int b = 255; b >= 0; b -= 5) { analogWrite(LED, b); delay(20); }
+}`],
+lamp:["Auto night lamp","Arduino",`const int LDR = A0;  // light sensor with resistor to GND
+const int LED = 9;
+
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  int light = analogRead(LDR);  // 0 dark to 1023 bright
+  digitalWrite(LED, light < 400 ? HIGH : LOW);
+  delay(100);
+}`],
+avoid:["Obstacle-avoiding car","Arduino",`const int TRIG = 7, ECHO = 8;
+const int LF = 5, LB = 6, RF = 9, RB = 10;  // motor driver pins
+
+long distanceCm() {
+  digitalWrite(TRIG, LOW);  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH); delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  return pulseIn(ECHO, HIGH, 30000) / 58;
+}
+
+void drive(int lf, int lb, int rf, int rb) {
+  analogWrite(LF, lf); analogWrite(LB, lb);
+  analogWrite(RF, rf); analogWrite(RB, rb);
+}
+
+void setup() {
+  pinMode(TRIG, OUTPUT); pinMode(ECHO, INPUT);
+  pinMode(LF, OUTPUT); pinMode(LB, OUTPUT);
+  pinMode(RF, OUTPUT); pinMode(RB, OUTPUT);
+}
+
+void loop() {
+  long d = distanceCm();
+  if (d > 0 && d < 20) { drive(0, 150, 150, 0); delay(400); }  // turn away
+  else drive(150, 0, 150, 0);                                  // go forward
+}`],
+servo:["Servo arm sweep","Arduino",`#include <Servo.h>
+Servo arm;
+
+void setup() {
+  arm.attach(9);
+}
+
+void loop() {
+  for (int a = 0; a <= 180; a += 2) { arm.write(a); delay(15); }
+  for (int a = 180; a >= 0; a -= 2) { arm.write(a); delay(15); }
+}`],
+pid:["Smooth steering with PID","Python",`def pid(error, state, kp=1.0, ki=0.0, kd=0.2, dt=0.02):
+    state["i"] += error * dt
+    d = (error - state["prev"]) / dt
+    state["prev"] = error
+    return kp * error + ki * state["i"] + kd * d
+
+state = {"i": 0.0, "prev": 0.0}
+# steering = pid(target - sensor_reading, state)`],
+ml:["Train your first AI model","Python",`from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0)
+
+model = RandomForestClassifier().fit(X_train, y_train)
+print("Accuracy on unseen data:", model.score(X_test, y_test))`]};
+function copyText(b,t){var ok=function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy'},1500)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){b.textContent='Select & copy'})}
+  else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){b.textContent='Select & copy'}a.remove()}}
+function codeBlock(title,lang,code){var w=document.createElement('div'),h=document.createElement('div');h.className='cb';
+  var l=document.createElement('span');l.innerHTML='<b></b> ';l.firstChild.textContent=title||'Code';l.appendChild(document.createTextNode(lang?'· '+lang:''));
+  var b=document.createElement('button');b.className='cp';b.textContent='Copy';b.onclick=function(){copyText(b,code)};h.appendChild(l);h.appendChild(b);
+  var p=document.createElement('pre'),c=document.createElement('code');p.className='code';c.textContent=code;p.appendChild(c);w.appendChild(h);w.appendChild(p);return w}
+var LK={ai:["ml","pid"],robot:["avoid","servo"],elec:["blink","fade","lamp"]},LN={ai:"🐍 AI (Python)",robot:"🤖 Robot (Arduino)",elec:"⚡ Electronics (Arduino)"};
+function showL(k){document.querySelectorAll('#ltabs .tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)});
+  var o=document.getElementById('lcode');o.innerHTML='';LK[k].forEach(function(x){var c=document.createElement('div');c.className='card';c.style.marginBottom='12px';c.appendChild(codeBlock(CODE[x][0],CODE[x][1],CODE[x][2]));o.appendChild(c)})}
+Object.keys(LN).forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=LN[k];b.onclick=function(){showL(k)};document.getElementById('ltabs').appendChild(b)});showL('ai');
+var TIPS=["Write it as: I want to build ___ so that ___.","List the parts or data you need. Start with only what the smallest version requires.","Build the smallest working piece first, like one LED blinking or one tiny model training.","Change one thing at a time and write down what happens.","Post it in the Community Plaza or save your design from the Design Studio."];
+function nextStep(){var bx=document.querySelectorAll('#chk input'),i=0;for(;i<bx.length;i++)if(!bx[i].checked)break;
+  return i>=bx.length?'You finished your whole checklist, nice work! Share it in the Community Plaza, then pick a harder starter project.':'Next on your checklist: "'+L[i]+'". '+TIPS[i]}
+var KB=[[/resistor|burn|won.?t (light|turn|work)|not (lighting|working)|dead/,"Let's debug it. 1) LEDs have a direction, so the longer leg goes toward positive. 2) Always use a resistor, about 220 Ω on 5V. 3) Check each breadboard row is really connected and the battery is fresh. A multimeter helps you see where the voltage stops.",null],
+[/blink|first (circuit|project)|led code/,"The classic first project. Wire an LED with a 220 Ω resistor to pin 13 and ground, then upload this:","blink"],
+[/fade|pwm|dim|bright/,"PWM switches a pin on and off very fast, so the LED looks dimmer or brighter. Use a pin marked with ~ :","fade"],
+[/ultrasonic|obstacle|avoid|rover|robot car|distance/,"This car reads an ultrasonic sensor and turns away from things. Use a motor driver board (never power motors straight from the Arduino pins) and a separate battery for the motors:","avoid"],
+[/servo|arm/,"Servos take a target angle. Bigger servos need their own 5V supply, with the grounds joined together:","servo"],
+[/dark|ldr|light sensor|night/,"A light sensor (LDR) plus a resistor makes a voltage divider on A0. This lamp turns on in the dark:","lamp"],
+[/pid|smooth|steady|wobble/,"PID corrects errors smoothly. Start with only kp, then add a little kd until the wobble stops:","pid"],
+[/train|model|machine learning|neural|classif|\bai\b|\bml\b/,"A great first AI project: train a small classifier and test it on data it has never seen. Run this in Google Colab:","ml"],
+[/next|start|begin|where|stuck|help/,null,"next"]];
+function localReply(q){var t=q.toLowerCase();for(var i=0;i<KB.length;i++)if(KB[i][0].test(t)){return KB[i][2]==='next'?{t:nextStep()}:{t:KB[i][1],k:KB[i][2]}}
+  return {t:"I can help with starter code (LED, motors, sensors, servos, AI, physics, math), debugging, and picking your next step. Try asking: \"show me blink LED code\" or \"what should I do next?\""}}
+var cm=document.getElementById('cmsg'),cin=document.getElementById('cin'),csend=document.getElementById('csend'),coach=null,hist=[],busy=false;
+function addText(b,t){if(!t)return;var d=document.createElement('div');d.textContent=t;b.appendChild(d)}
+function addMsg(who,text,key){var b=document.createElement('div');b.className='bub '+who;
+  if(who==='me')addText(b,text);else{var re=/```(\w*)\n?([\s\S]*?)```/g,last=0,m;
+    while((m=re.exec(text))){addText(b,text.slice(last,m.index).trim());b.appendChild(codeBlock('',m[1]||'code',m[2].trim()));last=re.lastIndex}
+    addText(b,text.slice(last).trim());if(key)b.appendChild(codeBlock(CODE[key][0],CODE[key][1],CODE[key][2]))}
+  cm.appendChild(b);cm.scrollTop=cm.scrollHeight;return b}
+async function ask(q){if(busy||!q.trim())return;busy=true;csend.disabled=true;addMsg('me',q);cin.value='';hist.push('Student: '+q);
+  var done=document.querySelectorAll('#chk :checked').length,r=null;
+  if(coach){var w=addMsg('ai','Thinking...');
+    try{var prompt="You are a warm, encouraging mentor inside BuildBot Lab, a website for beginners learning AI, robotics, electronics, engineering, physics and math. Reply in under 180 words. Be practical. When code helps, put it in fenced code blocks (Arduino C++ or Python) with short comments. Mention safety when power, batteries or motors are involved and never advise working with mains voltage. The student has completed "+done+" of 5 checklist steps. Conversation so far:\n"+hist.slice(-6).join("\n")+"\nReply as the mentor to the last student message.";
+      var res=await coach(prompt,{cache:false});w.remove();addMsg('ai',res.text);hist.push('Coach: '+res.text.slice(0,300))}
+    catch(e){w.remove();r=localReply(q);addMsg('ai',r.t,r.k)}}
+  else{r=localReply(q);addMsg('ai',r.t,r.k);hist.push('Coach: '+r.t)}
+  busy=false;csend.disabled=false}
+csend.onclick=function(){ask(cin.value)};cin.addEventListener('keydown',function(e){if(e.key==='Enter')ask(cin.value)});
+["What should I do next?","Show me blink LED code","My LED won't light","Obstacle robot code","Train my first AI"].forEach(function(x){var b=document.createElement('button');b.className='chip';b.textContent=x;b.onclick=function(){ask(x)};document.getElementById('cchips').appendChild(b)});
+addMsg('ai',"Hi! I'm your build coach 👋 Tell me what you want to make, ask a question, or ask for code. Not sure where to start? Tap a suggestion below.");
+(async function(){try{if(typeof claude!=='undefined'&&claude.use)coach=await claude.use("sample")}catch(e){}
+  document.getElementById('cmode').textContent=coach?'Powered by Claude. Answers are generated, so double-check wiring and power before you build.':'Quick-answer coach with built-in code. Live AI chat is available on the Claude-hosted version of this page.'})();
+modeUI();
+
+var HUB={eng:[["⚙️","Mechanical","Designs machines and anything that moves.","Forces, torque, gears, materials, heat.","Build a gear-driven car or a simple catapult."],
+["🌉","Civil","Designs buildings, bridges, roads and water systems.","Loads, tension and compression, trusses, concrete and steel.","Build a popsicle-stick bridge and test how much it holds."],
+["🧪","Chemical","Turns raw materials into useful products at scale.","Reactions, mass balance, heat transfer, fluid flow.","Make a water filter from sand, gravel and charcoal."],
+["✈️","Aerospace","Designs aircraft, rockets and spacecraft.","Lift, drag, thrust, orbits, lightweight structures.","Test paper plane wing shapes, or launch a water rocket with an adult."],
+["💻","Computer & Software","Builds the hardware and programs that run everything.","Algorithms, data structures, operating systems, networks.","Write a small game or website, then publish it."],
+["🫀","Biomedical","Applies engineering to health and medicine.","Biomechanics, sensors, signals, prosthetics.","Build a pulse sensor from an LED and a light sensor."],
+["🧱","Materials","Studies what things are made of and how they behave.","Strength, stiffness, conductivity, fatigue, composites.","Compare how much weight different paper or tape layers hold."],
+["🌱","Environmental","Protects air, water and land with smart design.","Pollution control, renewable energy, recycling loops.","Build a small solar cooker and measure its temperature."],
+["🏭","Industrial","Makes processes faster, cheaper and safer.","Optimization, lean methods, quality control, scheduling.","Time a task, improve the steps, then time it again."],
+["🤝","Mechatronics","Combines mechanical, electrical and software design.","Sensors, actuators, control loops, embedded code.","Build a small robot that reacts to light or distance."]],
+phys:[["🍎","Classical mechanics","Motion, forces and energy.","Newton's laws, momentum, energy conservation.","Roll a ball down ramps and time it to find acceleration."],
+["🧲","Electricity & magnetism","Charges, fields and circuits.","Electric fields, circuits, induction, electromagnetic waves.","Make an electromagnet from a nail, wire and battery."],
+["🔥","Thermodynamics","Heat, temperature and energy flow.","Laws of thermodynamics, entropy, heat engines.","Compare how fast hot water cools in different cups."],
+["🌈","Waves & optics","Sound and light.","Frequency, wavelength, reflection, refraction, interference.","Split light with a glass of water or an old CD."],
+["⚛️","Quantum physics","The behavior of very tiny things.","Wave-particle duality, quantization, uncertainty.","Explore the double-slit experiment in the free PhET simulator."],
+["🪐","Relativity & cosmology","Space, time, gravity and the universe.","Spacetime, time dilation, black holes, expansion.","Simulate planet orbits with a few lines of Python."],
+["☢️","Nuclear & particle","Atoms' cores and fundamental particles.","Radioactivity, half-life, fission, fusion, the Standard Model.","Simulate radioactive decay by rolling dice."]],
+math:[["🔤","Algebra","Using symbols to describe relationships.","Equations, functions, factoring, inequalities.","Predict battery life with a linear equation."],
+["📐","Geometry & trigonometry","Shapes, angles and distances.","Triangles, circles, sine and cosine.","Measure a tree's height using its shadow and similar triangles."],
+["∫","Calculus","How things change and add up.","Limits, derivatives, integrals.","Plot the position, speed and acceleration of a toy car."],
+["🧮","Linear algebra","Vectors and matrices, the language of graphics and AI.","Vectors, matrices, transformations.","Rotate a shape using a matrix in Python."],
+["🎲","Probability & statistics","Reasoning about chance and data.","Averages, spread, distributions, Bayes' rule.","Flip a coin 100 times and compare with the prediction."],
+["🔗","Discrete math & logic","The math of computers.","Logic, sets, graphs, binary, counting.","Build logic gates in a free circuit simulator."],
+["🔐","Number theory & crypto","Primes and secret codes.","Primes, modular arithmetic, ciphers.","Write a Caesar cipher, then learn why RSA is stronger."]]},
+HN={eng:"🛠 Engineering",phys:"🔭 Physics",math:"➗ Math"};
+function showH(k){document.querySelectorAll('#htabs .tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)});
+  document.getElementById('hubl').innerHTML=HUB[k].map(function(x){return '<details><summary>'+x[0]+' '+x[1]+'</summary><p>'+x[2]+'</p><p><b>Big ideas:</b> '+x[3]+'</p><p style="color:var(--c2)"><b>Try it:</b> '+x[4]+'</p></details>'}).join('')}
+Object.keys(HN).forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=HN[k];b.onclick=function(){showH(k)};document.getElementById('htabs').appendChild(b)});showH('eng');
+D.phys=["Master the basics|Units, measurement and vectors. Get comfortable with SI units.","Motion and forces|Learn Newton's three laws and practice with free-body diagrams.","Energy and momentum|Conservation laws solve many problems without tracking every detail.","Waves, heat and electricity|Connect sound, light, thermodynamics and circuits.","Modern physics|Meet relativity and quantum ideas, with simulations."];
+D.math=["Fluent arithmetic and algebra|Fractions, equations and graphs are the foundation for everything.","Geometry and trigonometry|Angles and triangles power robotics, graphics and navigation.","Functions and calculus|Understand rates of change and areas under curves.","Linear algebra|Vectors and matrices are essential for AI and 3D graphics.","Probability and statistics|Learn to reason about uncertainty and read data."];
+N.phys="🔭 Physics";N.math="➗ Math";
+['phys','math'].forEach(function(k){var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=N[k];b.onclick=function(){show(k)};tabs.appendChild(b)});
+CODE.proj=["Projectile motion","Python",`import math
+
+def projectile(speed, angle_deg, g=9.81):
+    a = math.radians(angle_deg)
+    time = 2 * speed * math.sin(a) / g
+    rng = speed**2 * math.sin(2 * a) / g
+    peak = (speed * math.sin(a))**2 / (2 * g)
+    return time, rng, peak   # seconds, meters, meters
+
+print(projectile(20, 45))`];
+CODE.quad=["Quadratic solver","Python",`import math
+
+def solve_quadratic(a, b, c):
+    d = b * b - 4 * a * c
+    if d < 0:
+        return None  # no real roots
+    r = math.sqrt(d)
+    return (-b + r) / (2 * a), (-b - r) / (2 * a)
+
+print(solve_quadratic(1, -3, 2))  # (2.0, 1.0)`];
+LK.sci=["proj","quad"];LN.sci="🔭 Physics & Math (Python)";
+var lb=document.createElement('button');lb.className='tab';lb.dataset.k='sci';lb.textContent=LN.sci;lb.onclick=function(){showL('sci')};document.getElementById('ltabs').appendChild(lb);
+function calcPM(){var v=+document.getElementById('pv').value,a=+document.getElementById('pa').value*Math.PI/180,g=9.81;
+  document.getElementById('o5').innerHTML='Flight time: '+f(2*v*Math.sin(a)/g)+' s<br>Range: '+f(v*v*Math.sin(2*a)/g)+' m<br>Peak height: '+f(Math.pow(v*Math.sin(a),2)/(2*g))+' m';
+  var m=+document.getElementById('fm').value,ac=+document.getElementById('fa').value,sp=+document.getElementById('fv').value;
+  document.getElementById('o6').innerHTML='Force: '+f(m*ac)+' N<br>Kinetic energy: '+f(.5*m*sp*sp)+' J<br>Momentum: '+f(m*sp)+' kg·m/s';
+  var qa=+document.getElementById('qa').value,qb=+document.getElementById('qb').value,qc=+document.getElementById('qc').value,d=qb*qb-4*qa*qc,o=document.getElementById('o7');
+  if(qa===0)o.textContent='a can\'t be 0 (that is a straight line).';
+  else if(d>=0)o.innerHTML='x1 = '+f((-qb+Math.sqrt(d))/(2*qa))+'<br>x2 = '+f((-qb-Math.sqrt(d))/(2*qa));
+  else o.innerHTML='No real roots.<br>x = '+f(-qb/(2*qa))+' ± '+f(Math.sqrt(-d)/(2*qa))+'i';
+  var n=document.getElementById('sn').value.split(/[,\s]+/).filter(function(x){return x!==''}).map(Number).filter(isFinite),s8=document.getElementById('o8');
+  if(!n.length){s8.textContent='Enter some numbers.';return}
+  var mean=n.reduce(function(x,y){return x+y},0)/n.length,so=n.slice().sort(function(x,y){return x-y}),h=so.length>>1,med=so.length%2?so[h]:(so[h-1]+so[h])/2,
+  sd=Math.sqrt(n.reduce(function(x,y){return x+(y-mean)*(y-mean)},0)/n.length);
+  s8.innerHTML='Count: '+n.length+'<br>Mean: '+f(mean)+'<br>Median: '+f(med)+'<br>Std dev: '+f(sd)}
+['pv','pa','fm','fa','fv','qa','qb','qc','sn'].forEach(function(i){document.getElementById(i).addEventListener('input',calcPM)});calcPM();
+KB.unshift([/projectile|trajectory|throw/,"Here's a projectile calculator in Python. It gives flight time, range and peak height, ignoring air resistance:","proj"],
+[/quadratic|roots/,"The quadratic formula finds where a x² + b x + c = 0 crosses zero:","quad"],
+[/physics|gravity|newton|velocity|momentum|quantum|relativity|thermodynamic|optics|magnet/,"Physics is best learned by measuring things. Open the Science & Engineering Hub for a roadmap and hands-on projects, then try the physics calculators. Tell me a topic (forces, energy, waves, quantum) and I'll explain it.",null],
+[/math|algebra|calculus|derivative|integral|matrix|matrices|probability|statistic|geometry|trigonometry/,"Math gets fun when you build something with it. See the Math roadmap and calculators. Which topic do you want: algebra, trig, calculus, linear algebra or statistics?",null],
+[/mechanical|civil|chemical|aerospace|biomedical|materials|environmental|industrial|mechatronic|engineering/,"Every engineering field has a starter project in the Science & Engineering Hub, from popsicle-stick bridges to water rockets. Tell me which field interests you and I'll suggest where to start.",null]);
+
+var eb=document.createElement('button');eb.className='tab';eb.textContent='✨ Load example';
+eb.onclick=function(){if(cur().p.length&&!confirm('Replace your current design with an example?'))return;var e=EX[mode];
+  SD[mode]={p:e.p.map(function(q){return {t:q[0],x:q[1],y:q[2]}}),w:e.w.map(function(x){return x.slice()})};sel=null;draw()};
+document.getElementById('stool').appendChild(eb);
+
+var SUB={nahco3:["Baking soda","NaHCO₃"],vin:["Vinegar","CH₃COOH"],hcl:["Hydrochloric acid (dilute)","HCl"],naoh:["Sodium hydroxide","NaOH"],mg:["Magnesium","Mg"],zn:["Zinc","Zn"],fe:["Iron","Fe"],cuso4:["Copper sulfate","CuSO₄"],agno3:["Silver nitrate","AgNO₃"],nacl:["Table salt","NaCl"],caco3:["Chalk","CaCO₃"],h2o2:["Hydrogen peroxide","H₂O₂"],mno2:["Manganese dioxide","MnO₂"],na:["Sodium metal","Na"],h2o:["Water","H₂O"],ch4:["Methane","CH₄"],o2:["Oxygen","O₂"]};
+var AB="Acid–base reaction that releases gas",NE="Neutralization (acid + base)",SD2="Single displacement (metal + acid)";
+var RX={"nahco3+vin":["NaHCO₃ + CH₃COOH → CH₃COONa + H₂O + CO₂↑",AB,"Lots of fizzing as carbon dioxide bubbles form.",{c:'#d8eef5',b:3,h:-1}],
+"hcl+nahco3":["NaHCO₃ + HCl → NaCl + H₂O + CO₂↑",AB,"Vigorous fizzing of carbon dioxide.",{c:'#d8eef5',b:3,h:-1}],
+"caco3+hcl":["CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑",AB,"Steady fizzing as the chalk slowly dissolves.",{c:'#e4f0f3',b:2,h:0}],
+"caco3+vin":["CaCO₃ + 2CH₃COOH → Ca(CH₃COO)₂ + H₂O + CO₂↑",AB,"Slow, gentle bubbles on the chalk.",{b:1,h:0}],
+"hcl+naoh":["HCl + NaOH → NaCl + H₂O",NE,"No bubbles, but the mixture warms up. You get salt water.",{c:'#d6ecf4',b:0,h:1}],
+"naoh+vin":["CH₃COOH + NaOH → CH₃COONa + H₂O",NE,"No bubbles, mild warming.",{b:0,h:1}],
+"hcl+mg":["Mg + 2HCl → MgCl₂ + H₂↑",SD2,"Fast bubbling of hydrogen gas as the metal shrinks.",{b:3,h:1},"Hydrogen is flammable. Keep flames away."],
+"hcl+zn":["Zn + 2HCl → ZnCl₂ + H₂↑",SD2,"Steady bubbles of hydrogen from the zinc.",{b:2,h:1},"Hydrogen is flammable. Keep flames away."],
+"fe+hcl":["Fe + 2HCl → FeCl₂ + H₂↑",SD2,"Slow bubbles. The solution turns pale green over time.",{c:'#cfe8d0',b:1,h:0}],
+"cuso4+zn":["Zn + CuSO₄ → ZnSO₄ + Cu","Single displacement (metal + salt)","The blue color fades and reddish-brown copper coats the zinc.",{c:'#e3eef2',p:'#b4572f',b:0,h:0}],
+"cuso4+mg":["Mg + CuSO₄ → MgSO₄ + Cu","Single displacement (metal + salt)","Blue fades quickly, copper forms and the mixture warms.",{c:'#e3eef2',p:'#b4572f',b:1,h:1}],
+"cuso4+fe":["Fe + CuSO₄ → FeSO₄ + Cu","Single displacement (metal + salt)","Blue turns pale green as copper coats the iron.",{c:'#cfe8d0',p:'#b4572f',b:0,h:0}],
+"agno3+nacl":["AgNO₃ + NaCl → AgCl↓ + NaNO₃","Precipitation","A cloudy white solid (silver chloride) forms and sinks.",{c:'#eef3f5',p:'#ffffff',b:0,h:0},"Silver nitrate is toxic and stains skin."],
+"cuso4+naoh":["CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄","Precipitation","A light blue solid forms and settles.",{c:'#e8f1f5',p:'#4a90e2',b:0,h:0}],
+"h2o2+mno2":["2H₂O₂ → 2H₂O + O₂↑ (MnO₂ speeds it up)","Catalyzed decomposition","Rapid foaming of oxygen. The mixture warms. The MnO₂ isn't used up.",{b:3,h:1}],
+"h2o+na":["2Na + 2H₂O → 2NaOH + H₂↑","Violent metal-water reaction","Fast fizzing, zooming metal, and possible fire or small explosion.",{b:3,h:2,f:1},"⚠️ Dangerous! Never try this yourself. Virtual lab only."],
+"ch4+o2":["CH₄ + 2O₂ → CO₂ + 2H₂O","Combustion","With a spark it burns with a blue flame, releasing heat and light.",{b:0,h:2,f:1},"Gas fires and explosions are serious dangers."],
+"mg+o2":["2Mg + O₂ → 2MgO","Combustion (oxidation)","Once lit, it burns with a blinding white light and leaves white powder.",{p:'#ffffff',b:0,h:2,f:1},"Never look directly at burning magnesium."]};
+['ra','rb'].forEach(function(id,n){var e=document.getElementById(id);Object.keys(SUB).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=SUB[k][0]+' ('+SUB[k][1]+')';e.appendChild(o)});e.selectedIndex=n?1:0});
+function mixRx(){var a=document.getElementById('ra').value,b=document.getElementById('rb').value,out=document.getElementById('rout');
+  if(window.rxFX)rxFX(null);
+  if(a===b){out.textContent='Pick two different substances.';return}
+  var r=RX[[a,b].sort().join('+')];
+  if(!r){out.innerHTML='<b>No simple reaction</b><br>These two don\'t react in an obvious way here, or this combination isn\'t in the lab yet. Try another pair!';return}
+  var o=r[3];if(window.rxFX)rxFX(o,a,b);
+  var tp=o.h<0?'🧊 Gets slightly colder':o.h===0?'No big temperature change':o.h===1?'🔥 Gets warm':'🔥🔥 Gets very hot, with light';
+  out.innerHTML='<div class="eq"></div><b>Type:</b> '+r[1]+'<br><b>What you\'d see:</b> '+r[2]+'<br><b>Temperature:</b> '+tp+'<p class="note" style="margin-top:8px"></p>';
+  out.querySelector('.eq').textContent=r[0];out.querySelector('.note').textContent=(r[4]?r[4]+' ':'')+'Virtual lab only: real experiments need an adult, goggles and gloves.'}
+document.getElementById('rmix').onclick=mixRx;
+function calcMech(){var d=+document.getElementById('gt1').value,n=+document.getElementById('gt2').value,r=+document.getElementById('grpm').value;
+  document.getElementById('o9').innerHTML='Ratio: '+f(n/d)+' : 1<br>Output speed: '+f(r*d/n)+' RPM<br>Torque: '+f(n/d)+'× (ideal)';
+  var l=+document.getElementById('lv1').value,la=+document.getElementById('lv2').value,ea=+document.getElementById('lv3').value;
+  document.getElementById('o10').innerHTML='Effort needed: '+f(l*la/ea)+' N<br>Advantage: '+f(ea/la)+'×'}
+['gt1','gt2','grpm','lv1','lv2','lv3'].forEach(function(i){document.getElementById(i).addEventListener('input',calcMech)});calcMech();
+var RM={emech:["⚙️ Mechanical","Statics and forces|Learn how forces balance in things that don't move, using free-body diagrams.","Dynamics and motion|Study how forces make things speed up, slow down and spin.","Machine parts|Understand gears, bearings, springs, shafts and fasteners.","CAD and prototyping|Model parts in free CAD like FreeCAD, then 3D print or build them.","Test and improve|Measure strength, speed and efficiency, then redesign."],
+civil:["🌉 Civil","Loads and structures|Learn dead loads, live loads, tension and compression.","Materials|Compare wood, steel and concrete and where each works best.","Trusses and bridges|Triangles spread forces. Build and test a small truss bridge.","Soil and foundations|Understand why the ground matters as much as the building.","Plan and test|Sketch, model, load-test, and learn from where it fails."],
+chem:["🧪 Chemical","Atoms and the periodic table|Know elements, electrons and how atoms bond.","Reactions and balancing|Write and balance equations, and try the Reaction Lab.","Moles and stoichiometry|Convert between grams, moles and amounts of product.","Heat and flow|Learn heat transfer, fluids, and what happens in pipes and reactors.","Safe processes|Study safety, ventilation and scaling from lab to factory."],
+aero:["✈️ Aerospace","Forces of flight|Lift, drag, thrust and weight explain how things fly.","Wings and airfoils|See how wing shape changes lift with paper planes or a fan test.","Propulsion|Compare propellers, jets and rockets using Newton's third law.","Orbits and space|Learn orbital speed, gravity and rocket staging.","Build and fly|Test gliders, or a water rocket with an adult."],
+soft:["💻 Software","Learn to code|Pick Python or JavaScript and write small programs often.","Data structures and algorithms|Lists, trees and sorting give you tools to solve problems.","Build projects|Make a game, a website and a small app.","Version control|Use Git and GitHub to save and share your work.","Collaborate and ship|Work with others, write tests and publish something real."],
+bio:["🫀 Biomedical","Body basics|Learn the main systems: heart, lungs, muscles and nerves.","Signals and sensors|See how pulse, temperature and muscle signals are measured.","Biomechanics|Study how forces act on bones and joints.","Devices and prosthetics|Learn how pacemakers, implants and artificial limbs work.","Ethics and safety|Understand why testing and regulations matter for health tech."],
+env:["🌱 Environmental","Earth systems|Understand the air, water, soil and energy cycles.","Pollution and cleanup|Learn how filtering, treatment and recycling reduce harm.","Renewable energy|Compare solar, wind, hydro and storage.","Measure impact|Use data to track energy, water and waste.","Design for good|Build a solar cooker or water filter and test it."],
+mats:["🧱 Materials","Atoms and bonding|Metals, ceramics, polymers and composites differ because of bonding.","Strength and stiffness|Learn stress and strain and how to test them.","Heat and electricity|See why some materials conduct and others insulate.","Failure and fatigue|Study how and why materials crack and wear out.","Pick the right material|Match material to job, weight, cost and safety."],
+ind:["🏭 Industrial","Observe a process|Map every step of a task from start to finish.","Measure time and waste|Collect data on delays, mistakes and extra steps.","Improve the flow|Use lean ideas like 5S to remove waste.","Quality control|Use statistics to catch defects early.","Scale and schedule|Plan people, machines and materials to work together."]};
+Object.keys(RM).forEach(function(k){var a=RM[k];N[k]=a[0];D[k]=a.slice(1);var b=document.createElement('button');b.className='tab';b.dataset.k=k;b.textContent=a[0];b.onclick=function(){show(k)};tabs.appendChild(b)});
+KB.unshift([/chemical|chemistry|reaction|acid|periodic|molecule|react/,"Try the Reaction Lab: pick two substances, mix them, and see the balanced equation, what you'd observe, and safety notes. The Chemical roadmap covers balancing and moles too.",null],
+[/gear|torque|rpm|ratio|lever/,"Gear ratio = driven teeth ÷ driver teeth. A small gear driving a big gear gives more torque but less speed. Try the Gear ratio and Lever calculators, or build it in the Design Studio under Machine.",null]);
+var CAP={found:100,pil:30,wall:25,anch:20,truss:14,cab:10,beam:8,deck:6,roof:2,load:1000};
+function flow(c,dem){var p=c.p,n=p.length,S=n,T=n+1,R=[],O,i,v,u;for(i=0;i<n+2;i++)R.push(new Array(n+2).fill(0));
+  c.w.forEach(function(x){var k=Math.min(CAP[p[x[0]].t]||0,CAP[p[x[1]].t]||0);R[x[0]][x[1]]+=k;R[x[1]][x[0]]+=k});
+  O=R.map(function(r){return r.slice()});
+  p.forEach(function(q,j){if(q.t==='load')R[S][j]=dem;if(q.t==='found')R[j][T]=1e9});
+  var F=0,prev;
+  for(;;){prev=new Array(n+2).fill(-1);var qu=[S];prev[S]=S;
+    for(var h=0;h<qu.length&&prev[T]<0;h++){u=qu[h];for(v=0;v<n+2;v++)if(prev[v]<0&&R[u][v]>1e-9){prev[v]=u;qu.push(v)}}
+    if(prev[T]<0)break;var m=1e18;v=T;while(v!==S){m=Math.min(m,R[prev[v]][v]);v=prev[v]}
+    v=T;while(v!==S){u=prev[v];R[u][v]-=m;R[v][u]+=m;v=u}F+=m;if(F>1e8)break}
+  return {F:F,R:R,O:O,reach:prev.map(function(x){return x>=0})}}
+var snap=null,anim=null;
+function restoreSnap(){cancelAnimationFrame(anim);var c=cur();if(snap&&snap.length===c.p.length)snap.forEach(function(q,i){c.p[i].x=q.x;c.p[i].y=q.y});snap=null}
+function collapse(rs){var c=cur(),vy={},last=performance.now(),t0=last;snap=c.p.map(function(q){return {x:q.x,y:q.y}});rs.forEach(function(i){vy[i]=0});
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches){rs.forEach(function(i){c.p[i].y=340});draw();return}
+  (function step(now){var dt=Math.min(.03,(now-last)/1000);last=now;
+    rs.forEach(function(i){var q=c.p[i];vy[i]+=700*dt;q.y+=vy[i]*dt;if(q.y>340){q.y=340;vy[i]*=-.3;if(Math.abs(vy[i])<30)vy[i]=0}});
+    draw();if(now-t0<2500)anim=requestAnimationFrame(step)})(t0)}
+function fx1(x){return (+x).toFixed(1)}
+function runTest(){var c=cur(),o=document.getElementById('wout'),p=c.p;restoreSnap();TT={n:-1,w:-1,m:"",tint:[]};
+  var nl=p.filter(function(q){return q.t==='load'}).length;
+  if(!nl){o.textContent='Add a 🚚 Load on top of your structure first.';draw();return}
+  if(!p.some(function(q){return q.t==='found'})){o.textContent='Add a foundation so the weight has somewhere to go.';draw();return}
+  var W=WT*9.81/1000,tot=W*nl,cap=flow(c,1e9).F;
+  if(cap<1e-9){o.textContent='Your load is not connected to a foundation. Use Wire to build a load path.';draw();return}
+  var rs=flow(c,W),pass=rs.F>=tot-1e-6,sf=cap/tot,maxKg=Math.floor(cap/nl*1000/9.81);
+  TT={n:p.length,w:c.w.length,m:mode,tint:[]};var v;
+  var head='Weight: '+WT+' kg × 9.81 = '+fx1(W)+' kN'+(nl>1?' per load ('+fx1(tot)+' kN total)':'')+'<br>Structure capacity: '+fx1(cap)+' kN, breaking at about '+maxKg+' kg per load.<br>';
+  if(pass){c.w.forEach(function(x,i){var k=Math.min(CAP[p[x[0]].t]||1,CAP[p[x[1]].t]||1),u=Math.abs(rs.O[x[0]][x[1]]-rs.R[x[0]][x[1]])/k;TT.tint[i]=u<.6?'#16a05c':u<.9?'#e0a800':u<.999?'#f0803c':'#e5484d'});
+    v=sf<1.5?'⚠️ It holds, but only just. Engineers usually want a safety factor of 1.5 or more.':'✅ It holds!';
+    o.innerHTML=head+'Safety factor: '+sf.toFixed(2)+'<br><b>'+v+'</b> Green parts have spare strength, red ones are at their limit.';draw()}
+  else{var rset=[];p.forEach(function(q,i){if(rs.reach[i])rset.push(i)});c.w.forEach(function(x,i){if(rs.reach[x[0]]!==rs.reach[x[1]])TT.tint[i]='brk'});
+    o.innerHTML=head+'Safety factor: '+sf.toFixed(2)+'<br><b>💥 It collapses!</b> The red dashed links snapped. Add more paths (triangles help) or stronger parts, or reduce the weight.';collapse(rset)}}
+document.getElementById('wtest').onclick=runTest;
+document.getElementById('wreset').onclick=function(){restoreSnap();TT={n:-1,w:-1,m:"",tint:[]};document.getElementById('wout').textContent='';draw()};
+document.getElementById('wt').addEventListener('input',function(e){WT=+e.target.value;document.getElementById('wtv').textContent=WT;draw()});
+KB.unshift([/truss|bridge|structure|collapse|weight test|load test/,"In the Design Studio choose Structure, build with a foundation, pillars, beams and trusses, add a Load 🚚, then press Test it. The weight test shows whether your load path holds. Triangles (trusses) and extra paths to the ground make it stronger.",null]);
+
+(function(){
+function noGL(){document.querySelector('#studio .stage').style.display='none';document.getElementById('sv').style.display='block';document.querySelector('#rlab .rs').innerHTML='<p class="note" style="padding:12px">The 3D view needs internet and WebGL.</p>'}
+if(typeof THREE==='undefined'){noGL();return}
+try{
+var PI=Math.PI,rigs=[],cl=function(v,a,b){return Math.max(a,Math.min(b,v))},V=function(x,y,z){return new THREE.Vector3(x,y,z)},rnd=function(a){return Math.random()*a};
+function makeEnv(r){var pm=new THREE.PMREMGenerator(r),es=new THREE.Scene(),
+  bm=function(c,i){var m=new THREE.MeshBasicMaterial({side:THREE.BackSide,toneMapped:false});m.color.setRGB(c[0]*i,c[1]*i,c[2]*i);return m};
+  es.add(new THREE.Mesh(new THREE.BoxGeometry(40,20,40),bm([.55,.62,.72],.9)));
+  [[0,9.5,0,18,.2,18,[1,1,1],6],[-18,4,0,.2,8,16,[.8,.9,1],3.5],[18,4,2,.2,8,12,[1,.92,.8],3.2],[0,3,-19,16,7,.2,[1,1,1],2.2]].forEach(function(p){var m=new THREE.Mesh(new THREE.BoxGeometry(p[3],p[4],p[5]),bm(p[6],p[7]));m.material.side=THREE.FrontSide;m.position.set(p[0],p[1],p[2]);es.add(m)});
+  var fl=new THREE.Mesh(new THREE.PlaneGeometry(40,40),bm([.25,.28,.32],.8));fl.rotation.x=-PI/2;fl.position.y=-9.9;es.add(fl);
+  var t=pm.fromScene(es,.03).texture;pm.dispose();return t}
+function rig(cv,o){var r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}),sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(50,1,.1,200),
+  st={th:o.th,ph:o.ph,rad:o.rad,tg:V(0,0,0),auto:true,vis:true},g={r:r,sc:sc,cam:cam,st:st,cv:cv};
+  r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;
+  r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;r.outputEncoding=THREE.sRGBEncoding;
+  sc.environment=makeEnv(r);sc.add(new THREE.HemisphereLight(0xffffff,0x445566,.3));var dl=new THREE.DirectionalLight(0xffffff,.9);dl.position.set(6,12,8);dl.castShadow=true;dl.shadow.mapSize.set(2048,2048);dl.shadow.bias=-.0004;dl.shadow.normalBias=.02;
+  var sh=dl.shadow.camera;sh.left=-11;sh.right=11;sh.top=11;sh.bottom=-11;sh.near=1;sh.far=40;sc.add(dl);var fl=new THREE.PointLight(0x9cc8ff,.4,40);fl.position.set(-8,6,-6);sc.add(fl);
+  g.size=function(){var w=cv.clientWidth||300,h=cv.clientHeight||300;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
+  g.place=function(){cam.position.set(st.tg.x+st.rad*Math.sin(st.ph)*Math.sin(st.th),st.tg.y+st.rad*Math.cos(st.ph),st.tg.z+st.rad*Math.sin(st.ph)*Math.cos(st.th));cam.lookAt(st.tg)};
+  if(window.IntersectionObserver)new IntersectionObserver(function(es){st.vis=es[0].isIntersecting}).observe(cv);
+  rigs.push(g);g.size();g.place();return g}
+function orbit(g,claim){var cv=g.cv,P={},st=g.st;
+  function dist(){var k=Object.keys(P);if(k.length<2)return 0;var a=P[k[0]],b=P[k[1]];return Math.hypot(a.x-b.x,a.y-b.y)}
+  cv.addEventListener('pointerdown',function(e){st.auto=false;cv.setPointerCapture(e.pointerId);P[e.pointerId]={x:e.clientX,y:e.clientY,dr:null};if(Object.keys(P).length===1&&claim)P[e.pointerId].dr=claim(e)});
+  cv.addEventListener('pointermove',function(e){var q=P[e.pointerId];if(!q)return;
+    if(Object.keys(P).length===1){if(q.dr)q.dr(e);else{st.th-=(e.clientX-q.x)*.008;st.ph=cl(st.ph-(e.clientY-q.y)*.006,.15,1.55)}q.x=e.clientX;q.y=e.clientY}
+    else{var d0=dist();q.x=e.clientX;q.y=e.clientY;var d1=dist();if(d0&&d1)st.rad=cl(st.rad*d0/d1,4,30)}});
+  function up(e){delete P[e.pointerId]}cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+  cv.addEventListener('wheel',function(e){e.preventDefault();st.rad=cl(st.rad*(1+e.deltaY*.001),4,30)},{passive:false})}
+function resizeAll(){rigs.forEach(function(g){g.size()})}addEventListener('resize',resizeAll);
+function fsInit(id,btn,ov){var el=document.getElementById(id);
+  function open(){el.classList.add('fs');document.documentElement.style.overflow='hidden';try{var f=el.requestFullscreen||el.webkitRequestFullscreen;if(f){var pr=f.call(el);if(pr&&pr.catch)pr.catch(function(){})}}catch(e){}setTimeout(resizeAll,60);setTimeout(resizeAll,400)}
+  function close(){el.classList.remove('fs');document.documentElement.style.overflow='';try{if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}setTimeout(resizeAll,60)}
+  document.getElementById(ov).onclick=open;document.getElementById(btn).onclick=close;
+  ['fullscreenchange','webkitfullscreenchange'].forEach(function(n){document.addEventListener(n,function(){if(!document.fullscreenElement&&!document.webkitFullscreenElement&&el.classList.contains('fs'))close()})})}
+var last=performance.now();
+(function loop(now){var dt=Math.min(.05,(now-last)/1000);last=now;
+  rigs.forEach(function(g){try{if(!g.st.vis&&!g.cv.closest('.fs'))return;if(g.st.auto)g.st.th+=dt*.25;g.place();if(g.tick)g.tick(dt);g.r.render(g.sc,g.cam)}catch(e){}});requestAnimationFrame(loop)})(last);
+/* ---------- materials, textures, helpers ---------- */
+var PT={};function ptex(k,w,h,fn){if(PT[k])return PT[k];var c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;return PT[k]=t}
+function noiseT(){return ptex('noiseT',128,128,function(x,w,h){x.fillStyle='#808080';x.fillRect(0,0,w,h);for(var i=0;i<500;i++){var v=Math.floor(90+rnd(80));x.strokeStyle='rgba('+v+','+v+','+v+',.5)';x.beginPath();x.moveTo(0,rnd(h));x.lineTo(w,rnd(h)+rnd(4)-2);x.stroke()}})}
+function chipT(){return ptex('chipT',256,128,function(x,w,h){x.fillStyle='#16181c';x.fillRect(0,0,w,h);x.fillStyle='#d8dde3';x.font='bold 34px monospace';x.fillText('BB-4017',24,56);x.font='22px monospace';x.fillText('LOGIC 2026',24,92);x.beginPath();x.arc(w-30,h-30,9,0,7);x.fill()})}
+function puff(){return ptex('puff',64,64,function(x,w,h){var g=x.createRadialGradient(32,32,2,32,32,30);g.addColorStop(0,'rgba(255,255,255,.9)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,w,h)})}
+function fireT(){return ptex('fire',64,128,function(x,w,h){var g=x.createRadialGradient(32,88,3,32,70,46);g.addColorStop(0,'rgba(255,255,230,1)');g.addColorStop(.35,'rgba(255,190,60,.9)');g.addColorStop(.7,'rgba(255,80,10,.5)');g.addColorStop(1,'rgba(255,40,0,0)');x.fillStyle=g;x.fillRect(0,0,w,h)})}
+function Mt(c,m,r){m=m||0;r=r==null?.5:r;var o={color:c,metalness:m,roughness:r,envMapIntensity:1.1};if(m<.4){o.clearcoat=r<.7?.6:.1;o.clearcoatRoughness=.25}var x=new THREE.MeshPhysicalMaterial(o);if(m>.6){x.bumpMap=noiseT();x.bumpScale=.5}return x}
+function add(g,geo,c,x,y,z,m,r,rot){var o=new THREE.Mesh(geo,Mt(c,m,r));o.position.set(x||0,y||0,z||0);if(rot)o.rotation.set(rot[0]||0,rot[1]||0,rot[2]||0);o.castShadow=o.receiveShadow=true;g.add(o);return o}
+function glass(o,op){o.material.transparent=true;o.material.opacity=op;o.material.depthWrite=false;return o}
+function emit(o,c,i){o.material.emissive=new THREE.Color(c);o.material.emissiveIntensity=i;return o}
+function tm(o,t){o.material.map=t;o.material.color.set(0xffffff);o.material.needsUpdate=true;return o}
+var cyl=function(r,h,n,r2){return new THREE.CylinderGeometry(r2==null?r:r2,r,h,n||28)},bx=function(w,h,d){return new THREE.BoxGeometry(w,h,d)},box=rbox,sph=function(r){return new THREE.SphereGeometry(r,20,16)},tor=function(R,r){return new THREE.TorusGeometry(R,r,12,40)};
+var GC={};function rbox(w,h,d){var k=[w,h,d].join(),m=Math.min(w,h,d),g;if(GC[k])return GC[k];
+  if(m<.07)g=new THREE.BoxGeometry(w,h,d);else{var r=Math.min(m*.16,.06),sw=w-2*r,sh2=h-2*r,rr=Math.min(r*1.5,Math.min(sw,sh2)/2-.001),sh=new THREE.Shape(),x=-sw/2,y=-sh2/2;
+    sh.moveTo(x+rr,y);sh.lineTo(x+sw-rr,y);sh.quadraticCurveTo(x+sw,y,x+sw,y+rr);sh.lineTo(x+sw,y+sh2-rr);sh.quadraticCurveTo(x+sw,y+sh2,x+sw-rr,y+sh2);sh.lineTo(x+rr,y+sh2);sh.quadraticCurveTo(x,y+sh2,x,y+sh2-rr);sh.lineTo(x,y+rr);sh.quadraticCurveTo(x,y,x+rr,y);
+    g=new THREE.ExtrudeGeometry(sh,{depth:d-2*r,bevelEnabled:true,bevelThickness:r,bevelSize:r,bevelSegments:2,curveSegments:4});g.translate(0,0,-(d-2*r)/2)}
+  g.userData.keep=1;return GC[k]=g}
+function boardTex(kind){return ptex('b'+kind,1024,1024,function(x,w,h){
+  x.fillStyle={circuit:'#126b3a',robot:'#202f40',logic:'#0b2433',mech:'#7a8591'}[kind];x.fillRect(0,0,w,h);var i,j;
+  if(kind==='mech'){for(i=0;i<900;i++){x.strokeStyle='rgba(255,255,255,'+(Math.random()*.1)+')';var y=rnd(h);x.beginPath();x.moveTo(0,y);x.lineTo(w,y+rnd(6)-3);x.stroke()}
+    x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=3;for(i=1;i<4;i++){x.beginPath();x.moveTo(i*w/4,0);x.lineTo(i*w/4,h);x.stroke();x.beginPath();x.moveTo(0,i*h/4);x.lineTo(w,i*h/4);x.stroke()}
+    [[50,50],[w-50,50],[50,h-50],[w-50,h-50]].forEach(function(p){var g=x.createRadialGradient(p[0]-4,p[1]-4,2,p[0],p[1],18);g.addColorStop(0,'#cfd5db');g.addColorStop(1,'#3a4048');x.fillStyle=g;x.beginPath();x.arc(p[0],p[1],18,0,7);x.fill()});return}
+  var tr=kind==='circuit'?'#2f9d62':kind==='logic'?'#1fb5c9':'#4f7194',pad=kind==='circuit'?'#d9b25a':'#9fb4c8';x.lineCap='round';x.lineJoin='round';
+  for(j=0;j<70;j++){var px=rnd(w),py=rnd(h),L=60+rnd(200);x.strokeStyle=tr;x.lineWidth=6+Math.floor(rnd(3))*2;x.beginPath();x.moveTo(px,py);if(Math.random()<.5){x.lineTo(px+L,py);x.lineTo(px+L*1.5,py+L*.5)}else{x.lineTo(px,py+L);x.lineTo(px+L*.5,py+L*1.5)}x.stroke();
+    x.fillStyle=pad;x.beginPath();x.arc(px,py,9,0,7);x.fill();x.fillStyle='#0a0a0a';x.beginPath();x.arc(px,py,3.5,0,7);x.fill()}
+  for(j=0;j<60;j++){var ax=rnd(w),ay=rnd(h);x.fillStyle=pad;x.fillRect(ax-6,ay,6,12);x.fillRect(ax+22,ay,6,12);x.fillStyle='#111';x.fillRect(ax,ay,22,12)}
+  x.fillStyle='rgba(255,255,255,.7)';x.font='bold 34px sans-serif';x.fillText('BuildBot Lab',40,h-40);x.font='20px sans-serif';x.fillText('REV 1.0  •  made by makers',40,h-14);
+  x.strokeStyle='rgba(255,255,255,.45)';x.lineWidth=4;x.strokeRect(24,24,w-48,h-48)})}
+function conc(){return ptex('conc',128,128,function(x,w,h){x.fillStyle='#9ea3a8';x.fillRect(0,0,w,h);for(var i=0;i<900;i++){x.fillStyle='rgba('+(Math.random()<.5?'0,0,0':'255,255,255')+','+(Math.random()*.12)+')';x.fillRect(rnd(w),rnd(h),2,2)}})}
+function brick(){return ptex('brick',256,128,function(x,w,h){x.fillStyle='#c9bfae';x.fillRect(0,0,w,h);for(var r=0;r<8;r++)for(var c=0;c<6;c++){x.fillStyle='hsl('+(8+rnd(8))+',55%,'+(38+rnd(10))+'%)';x.fillRect((r%2?-26:0)+c*52+2,r*16+2,48,12)}})}
+function wood(){return ptex('wood',256,128,function(x,w,h){x.fillStyle='#b4824a';x.fillRect(0,0,w,h);for(var i=0;i<60;i++){x.strokeStyle='rgba(80,45,15,'+(Math.random()*.25)+')';x.beginPath();x.moveTo(0,rnd(h));x.bezierCurveTo(w*.3,rnd(h),w*.6,rnd(h),w,rnd(h));x.stroke()}})}
+function solarT(){return ptex('solar',128,96,function(x,w,h){x.fillStyle='#0f2a5c';x.fillRect(0,0,w,h);x.strokeStyle='#9db4d8';x.lineWidth=1.5;for(var i=1;i<6;i++){x.beginPath();x.moveTo(i*w/6,0);x.lineTo(i*w/6,h);x.stroke()}for(var j=1;j<4;j++){x.beginPath();x.moveTo(0,j*h/4);x.lineTo(w,j*h/4);x.stroke()}})}
+function gearGeo(n,R,th){var sh=new THREE.Shape(),pts=[],i,d=2*PI/n;for(i=0;i<n;i++)[[0,.82],[.2,1],[.5,1],[.7,.82]].forEach(function(k){var an=i*d+k[0]*d;pts.push([Math.cos(an)*R*k[1],Math.sin(an)*R*k[1]])});
+  sh.moveTo(pts[0][0],pts[0][1]);pts.slice(1).forEach(function(q){sh.lineTo(q[0],q[1])});sh.closePath();var h=new THREE.Path();h.absarc(0,0,R*.22,0,2*PI,true);sh.holes.push(h);
+  var g=new THREE.ExtrudeGeometry(sh,{depth:th,bevelEnabled:true,bevelThickness:.02,bevelSize:.02,bevelSegments:2});g.rotateX(-PI/2);return g}
+/* ---------- realistic part models ---------- */
+var Z=[0,0,PI/2],X=[PI/2,0,0],B={};
+function axial(g,L,r,body,bands,op){add(g,cyl(.02,L+.8),0xc9ced3,0,.3,0,.9,.25,Z);var b=add(g,cyl(r,L),body,0,.3,0,.1,.6,Z);if(op)glass(b,op);(bands||[]).forEach(function(c,k){add(g,cyl(r+.008,.07),c,-L/2+.17+k*.15,.3,0,.2,.5,Z)})}
+function chip(g,w,d,n){add(g,box(w,.28,d),0x16181c,0,.2,0,.2,.6);tm(add(g,new THREE.PlaneGeometry(w*.85,d*.7),0xffffff,0,.345,0,0,.5,[-PI/2,0,0]),chipT());add(g,cyl(.06,.02,12),0x555a60,-w/2+.12,.35,-d/2+.12,0,.5);for(var k=0;k<n;k++){var x=-w/2+.2+k*(w-.4)/(n-1||1);add(g,box(.07,.05,.14),0xc9ced3,x,.1,d/2+.04,.9,.3);add(g,box(.07,.05,.14),0xc9ced3,x,.1,-d/2-.04,.9,.3)}}
+function modb(g,w,d,c,h){h=h||.08;return add(g,box(w,h,d),c,0,.08+h/2,0,.1,.55)}
+function pinrow(g,n,x0,dx,y,z){for(var k=0;k<n;k++)add(g,box(.05,.2,.05),0xe8c547,x0+k*dx,y,z,.9,.3)}
+function bar(g,x1,y1,x2,y2,t,c){add(g,box(Math.hypot(x2-x1,y2-y1),t,t*1.4),c,(x1+x2)/2,(y1+y2)/2,0,.7,.4,[0,0,Math.atan2(y2-y1,x2-x1)])}
+function wheel(g){add(g,tor(.5,.2),0x1b1b1d,0,.7,0,0,.9,[0,PI/2,0]);for(var t=0;t<20;t++){var an=t*PI/10;add(g,box(.3,.09,.14),0x121214,0,.7+Math.cos(an)*.69,Math.sin(an)*.69,0,.95,[an,0,0])}for(var u=0;u<6;u++)add(g,cyl(.03,.34,8),0x555a60,0,.7+Math.cos(u*PI/3)*.28,Math.sin(u*PI/3)*.28,.9,.3,Z);add(g,cyl(.4,.3),0xc9d1d9,0,.7,0,.9,.25,Z);add(g,cyl(.14,.42,16),0x6b7783,0,.7,0,.9,.3,Z);for(var k=0;k<5;k++)add(g,box(.1,.64,.12),0xaab4bd,0,.7,0,.9,.3,[k*PI/5,0,0])}
+function gearm(g,n,R,c){add(g,gearGeo(n,R,.28),c,0,.04,0,.85,.35)}
+B.res=function(g){axial(g,.8,.17,0xd8c8a0,[0x6b3a1e,0x111111,0xc62828,0xd4af37])};
+B.dio=function(g){axial(g,.65,.14,0x141414,[0xc9ced3])};
+B.fuse=function(g){axial(g,1,.2,0xdfeaf0,[],.4);add(g,cyl(.012,1),0xb0b0b0,0,.3,0,.9,.3,Z);[-.5,.5].forEach(function(x){add(g,cyl(.215,.18),0xbfc5cb,x,.3,0,.9,.3,Z)})};
+B.clk=function(g){axial(g,.7,.22,0xcfd5da,[])};
+B.bat=function(g){if(mode==='robot'){add(g,box(1.4,.34,.85),0x1d56d6,0,.22,0,.1,.5);add(g,box(.9,.02,.5),0xffffff,0,.4,0,0,.8);add(g,cyl(.03,.5),0xd32f2f,.8,.25,.2,0,.5,Z);add(g,cyl(.03,.5),0x111111,.8,.25,-.2,0,.5,Z)}
+  else{add(g,cyl(.36,1.3),0x1f7a4d,0,.37,0,.3,.4,Z);add(g,cyl(.365,.22),0xf2c230,-.3,.37,0,.4,.4,Z);add(g,cyl(.12,.2),0xcfd4d9,.75,.37,0,.9,.3,Z)}};
+B.sol=function(g){tm(add(g,bx(1.5,.1,1.1),0xffffff,0,.12,0,.5,.3),solarT());add(g,box(1.56,.06,1.16),0xb8c0c8,0,.08,0,.8,.3)};
+B.pot=function(g){add(g,box(1.1,.25,1.1),0x2a62b8,0,.17,0,.1,.5);add(g,cyl(.36,.35),0x1a1a1a,0,.47,0,.3,.4);add(g,box(.05,.05,.3),0xffffff,0,.66,.12)};
+B.cap=function(g){add(g,cyl(.38,.9),0x1e3a8a,0,.5,0,.2,.5);add(g,box(.1,.8,.02),0xdfe6ee,0,.5,.385);add(g,cyl(.37,.03),0xc9ced3,0,.96,0,.9,.3);add(g,cyl(.02,.5),0xc9ced3,-.12,.05,0,.9,.3);add(g,cyl(.02,.5),0xc9ced3,.12,.05,0,.9,.3)};
+B.tr=function(g){add(g,cyl(.28,.6,16),0x15171a,0,.5,0,.1,.6);add(g,box(.34,.4,.12),0x15171a,0,.4,.16,.1,.6);[-.14,0,.14].forEach(function(x){add(g,cyl(.02,.45),0xc9ced3,x,.2,0,.9,.3)})};
+B.led=function(g){var c=mode==='robot'?0xfff2a8:mode==='logic'?0x44ff88:0xff3355;emit(glass(add(g,new THREE.SphereGeometry(.38,24,16,0,2*PI,0,PI/2),c,0,.45,0,0,.2),.85),c,.9);emit(glass(add(g,cyl(.42,.18),c,0,.36,0,0,.3),.85),c,.5);[-.12,.12].forEach(function(x){add(g,cyl(.02,.4),0xc9ced3,x,.15,0,.9,.3)})};
+B.sw=function(g){add(g,box(1.2,.34,.6),0x23272d,0,.2,0,.2,.5);add(g,box(.9,.04,.3),0xaab2ba,0,.39,0,.9,.3);add(g,box(.28,.34,.2),0xdfe4ea,.2,.55,0,.8,.3)};
+B.in=B.sw;B.out=B.led;
+B.btn=function(g){add(g,box(.95,.3,.95),0x22262b,0,.2,0,.2,.5);add(g,cyl(.3,.28),0xd32f2f,0,.45,0,.1,.4)};
+B.buz=function(g){add(g,cyl(.5,.5),0x111111,0,.3,0,.2,.5);add(g,cyl(.09,.52),0x000000,0,.31,0,0,.9)};
+B.mic=function(g){add(g,cyl(.3,.6),0xc9ced3,0,.35,0,.9,.3);add(g,cyl(.26,.04),0x222222,0,.67)};
+B.sen=function(g){modb(g,1.2,1,0x1b5bb8);add(g,cyl(.25,.4),0x151515,0,.34,0,.1,.5);pinrow(g,3,-.3,.3,.3,.4)};
+B.ic=function(g){chip(g,1.2,.7,4)};B.and=B.or=B.not=B.xor=B.nand=B.ic;
+B.mot=function(g){add(g,cyl(.4,.9),0xc9ced3,0,.42,0,.9,.35,Z);for(var r=0;r<4;r++)add(g,cyl(.41,.03),0x9aa4ad,-.3+r*.2,.42,0,.9,.3,Z);add(g,cyl(.4,.18),0x333333,-.54,.42,0,.4,.5,Z);add(g,box(.12,.1,.3),0xc9ced3,-.66,.42,0,.9,.3);
+  if(mode!=='circuit'){add(g,box(.42,.5,.5),0xd9a400,.66,.42,0,.4,.5);add(g,cyl(.07,.4),0xdfe4ea,1,.42,0,.95,.2,Z)}else add(g,cyl(.07,.4),0xdfe4ea,.65,.42,0,.95,.2,Z)};
+B.gnd=function(g){add(g,cyl(.5,.07),0xb87333,0,.1,0,.9,.35);[.8,.55,.3].forEach(function(w,i){add(g,box(w,.04,.07),0x2a2a2a,0,.15,-.12+i*.14)})};
+B.wifi=function(g){modb(g,1.1,.9,0x127a8a);add(g,box(.35,.08,.35),0x15171a,.1,.18,0);add(g,cyl(.04,.9),0x222222,-.4,.55,0)};
+B.brain=function(g){modb(g,1.65,1.15,0x00878a,.09);add(g,box(.38,.3,.4),0xb8c0c8,-.68,.28,-.15,.9,.3);add(g,box(.34,.28,.3),0x15171a,-.7,.27,.32,.1,.5);add(g,box(.5,.1,.5),0x15171a,.25,.2,0,.1,.6);pinrow(g,10,-.45,.1,.18,.5);pinrow(g,10,-.45,.1,.18,-.5);add(g,cyl(.09,.12,16),0xc9ced3,.65,.22,.3,.9,.3)};
+B.drv=function(g){modb(g,1.35,1,0xb3262e);for(var k=0;k<4;k++)add(g,box(.5,.28,.04),0x555a60,-.1,.3,-.18+k*.12,.8,.3);add(g,box(.3,.28,.3),0x1d5fc0,.5,.28,.25,.1,.5);add(g,box(.3,.28,.3),0x1d5fc0,.5,.28,-.2,.1,.5)};
+B.whl=wheel;
+B.trk=function(g){[-.55,.55].forEach(function(x){add(g,cyl(.3,.5),0x222222,x,.3,0,.2,.8,X)});add(g,box(1.1,.06,.52),0x1a1a1a,0,.6,0,.1,.9);add(g,box(1.1,.06,.52),0x1a1a1a,0,.02,0,.1,.9);for(var k=0;k<8;k++){add(g,box(.1,.07,.56),0x333333,-.5+k*.14,.64,0,.1,.9);add(g,box(.1,.07,.56),0x333333,-.5+k*.14,-.02,0,.1,.9)}};
+B.srv=function(g){add(g,box(.8,.8,.42),0x1d5fc0,0,.45,0,.3,.5);add(g,box(1.2,.07,.42),0x1d5fc0,0,.6,0,.3,.5);add(g,cyl(.1,.25),0xdfe4ea,.25,.97,0,.9,.3);add(g,box(.9,.06,.14),0xffffff,.25,1.1,0,.1,.5)};
+B.grp=function(g){add(g,box(.7,.5,.55),0x6b7783,0,.3,0,.7,.4);add(g,box(.14,.2,.85),0xc9ced3,.3,.4,.55,.9,.3,[0,.35,0]);add(g,box(.14,.2,.85),0xc9ced3,-.3,.4,.55,.9,.3,[0,-.35,0])};
+B.us=function(g){modb(g,1.55,.7,0x1b5bb8);[-.42,.42].forEach(function(x){add(g,cyl(.28,.36),0xc9ced3,x,.32,0,.9,.35,X);add(g,cyl(.2,.37),0x15171a,x,.32,0,.1,.7,X)});pinrow(g,4,-.2,.13,.15,-.28)};
+B.line=function(g){modb(g,1.2,.5,0x15171a);[-.35,.35].forEach(function(x){emit(glass(add(g,sph(.1),0xcccccc,x,.18,.12,0,.2),.8),0x88aaff,.4)});pinrow(g,3,-.15,.15,.18,-.15)};
+B.imu=function(g){modb(g,.85,.85,0x6a2fb5);add(g,box(.3,.07,.3),0x15171a,0,.2,0,.1,.5);pinrow(g,6,-.3,.12,.2,.35)};
+B.cam=function(g){if(mode==='mech'){add(g,cyl(.42,.25),0x8d98a3,0,.2,0,.8,.35).scale.set(1.35,1,1);add(g,cyl(.1,.5),0xdfe4ea,0,.3,0,.95,.2);return}
+  add(g,box(.9,.8,.5),0x15171a,0,.45,0,.3,.5);add(g,cyl(.3,.3),0x2c3e70,0,.45,.4,.2,.3,X);add(g,tor(.3,.04),0xc9ced3,0,.45,.55,.9,.3)};
+B.spk=function(g){add(g,cyl(.5,.5),0x15171a,0,.3,0,.2,.5);add(g,cyl(.4,.12,24,.15),0x303338,0,.52,0,.1,.6);add(g,tor(.42,.04),0x888888,0,.55,0,.8,.3,X)};
+B.gs=function(g){gearm(g,10,.5,0xd4af37)};B.gb=function(g){gearm(g,24,.75,0xaab4bd)};B.gear=function(g){gearm(g,16,.6,0xc9a24a)};
+B.axle=function(g){add(g,cyl(.1,1.5),0xc9ced3,0,.3,0,.95,.2,Z);[-.4,.4].forEach(function(x){add(g,cyl(.16,.12),0x555a60,x,.3,0,.9,.3,Z)})};
+B.bear=function(g){add(g,cyl(.5,.3),0xc9ced3,0,.2,0,.95,.2);add(g,cyl(.32,.31),0x30343a,0,.2,0,.5,.6);add(g,cyl(.2,.32),0xdfe4ea,0,.2,0,.95,.2);add(g,cyl(.08,.34),0x15171a,0,.2,0,.2,.6)};
+B.belt=function(g){add(g,tor(.5,.05),0x1a1a1a,0,.3,0,.1,.9,X).scale.set(1.6,1,1);[-.5,.5].forEach(function(x){add(g,cyl(.3,.3),0x8d98a3,x,.3,0,.8,.4)})};
+B.chain=function(g){B.belt(g);g.children[0].material.color.set(0x555a60);g.children[0].material.metalness=.9};
+B.pul=function(g){add(g,cyl(.5,.07),0x8d98a3,0,.1,0,.9,.3);add(g,cyl(.5,.07),0x8d98a3,0,.38,0,.9,.3);add(g,cyl(.34,.3),0x6b7783,0,.24,0,.8,.4);add(g,cyl(.1,.5),0xdfe4ea,0,.25,0,.95,.2)};
+B.crank=function(g){add(g,cyl(.35,.1),0x8d98a3,0,.1,0,.9,.3);add(g,box(.9,.1,.16),0xaab4bd,.35,.17,0,.9,.3);add(g,cyl(.12,.35),0xd32f2f,.78,.3,0,.3,.4)};
+B.pist=function(g){var c=mode==='mech'?0x6b7783:0x2f6fdd;add(g,cyl(.3,.9),c,-.2,.35,0,.7,.35,Z);add(g,cyl(.08,.8),0xdfe4ea,.5,.35,0,.95,.15,Z);add(g,cyl(.15,.12),0xd32f2f,.9,.35,0,.5,.4,Z)};B.hyd=B.pist;
+B.fly=function(g){add(g,cyl(.65,.22),0x6b7783,0,.15,0,.9,.35);for(var k=0;k<6;k++)add(g,cyl(.1,.24),0x23272d,Math.cos(k*PI/3)*.4,.15,Math.sin(k*PI/3)*.4,0,.7);add(g,cyl(.14,.3),0xdfe4ea,0,.2,0,.95,.2)};
+B.spr=function(g){var pts=[];for(var i=0;i<=80;i++){var a=i/80*PI*12;pts.push(V(Math.cos(a)*.35,.1+i/80*1.1,Math.sin(a)*.35))}add(g,new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),200,.05,8),0xb8c0c8,0,0,0,.9,.3)};
+B.lev=function(g){add(g,cyl(.3,.5,3),0x8d98a3,0,.25,0,.8,.4);add(g,box(1.6,.1,.28),0xb4824a,0,.55,0,.1,.7,[0,0,.12])};
+B.hinge=function(g){add(g,box(.7,.05,.7),0xaab4bd,-.36,.1,0,.9,.3);add(g,box(.7,.05,.7),0xaab4bd,.36,.1,0,.9,.3);add(g,cyl(.07,.75),0x6b7783,0,.15,0,.95,.2,X)};
+B.brk=function(g){add(g,cyl(.55,.08),0x8d98a3,0,.1,0,.9,.4);add(g,box(.4,.3,.34),0xd32f2f,.5,.15,0,.3,.5)};
+B.screw=function(g){add(g,cyl(.25,.2,6),0x8d98a3,-.5,.3,0,.9,.35,Z);add(g,cyl(.11,.95),0xaab4bd,.05,.3,0,.9,.3,Z);for(var k=0;k<7;k++)add(g,cyl(.125,.04),0x6b7783,-.3+k*.13,.3,0,.9,.4,Z)};
+B.fan=function(g){add(g,cyl(.16,.3),0x30343a,0,.2,0,.5,.5);for(var k=0;k<4;k++){var a=k*PI/2;add(g,box(.7,.04,.3),0x7fb6e8,Math.cos(a)*.38,.28,Math.sin(a)*.38,.2,.5,[.3,-a,0])}};
+B.valve=function(g){add(g,cyl(.2,1.2),0x8d98a3,0,.3,0,.8,.4,Z);add(g,sph(.32),0x6b7783,0,.3,0,.8,.4);add(g,cyl(.05,.4),0xaab4bd,0,.7,0,.9,.3);add(g,tor(.25,.04),0xd32f2f,0,.9,0,.2,.5,X)};
+B.wt=function(g){add(g,cyl(.6,.55,28,.42),0x30343a,0,.3,0,.8,.45);add(g,tor(.2,.045),0x30343a,0,.7,0,.8,.45)};
+B.found=function(g,d){tm(add(g,bx(d[0],d[1],d[2]),0xffffff,0,0,0,0,.95),conc())};
+B.pil=function(g,d){var h=d[1];tm(add(g,cyl(.3,h-.3,24),0xffffff,0,0,0,0,.9),conc());[-1,1].forEach(function(s){tm(add(g,bx(.8,.15,.8),0xffffff,0,s*(h/2-.07),0,0,.9),conc())})};
+B.beam=function(g,d){var L=d[0];add(g,box(L,.07,.45),0x6b7f94,0,.16,0,.8,.4);add(g,box(L,.07,.45),0x6b7f94,0,-.16,0,.8,.4);add(g,box(L,.3,.07),0x6b7f94,0,0,0,.8,.4)};
+B.truss=function(g){var P=[[-.58,-.55],[.58,-.55],[0,.55]];for(var k=0;k<3;k++)bar(g,P[k][0],P[k][1],P[(k+1)%3][0],P[(k+1)%3][1],.09,0x7a8896)};
+B.cab=function(g,d){add(g,cyl(.035,d[1]),0x9aa4ae,0,0,0,.9,.3);for(var k=-3;k<=3;k++)add(g,tor(.05,.015),0x6b7783,0,k*d[1]/8,0,.9,.4,X);[-1,1].forEach(function(s){add(g,sph(.08),0x6b7783,0,s*d[1]/2,0,.9,.3)})};
+B.deck=function(g,d){add(g,box(d[0],d[1],d[2]),0x2b2e33,0,0,0,0,.9);for(var k=-3;k<=3;k++)add(g,box(.22,.02,.05),0xf2f2f2,k*d[0]/7,d[1]/2+.01,0,0,.6)};
+B.anch=function(g){add(g,new THREE.CylinderGeometry(.25,.02,.6,16),0x8d98a3,0,-.1,0,.9,.35);add(g,tor(.18,.05),0x6b7783,0,.28,0,.9,.35,X)};
+B.wall=function(g,d){tm(add(g,bx(d[0],d[1],d[2]),0xffffff,0,0,0,0,.9),brick())};
+B.roof=function(g,d){var sh=new THREE.Shape();sh.moveTo(-d[0]/2,-d[1]/2);sh.lineTo(d[0]/2,-d[1]/2);sh.lineTo(0,d[1]/2+.35);sh.closePath();var gm=new THREE.ExtrudeGeometry(sh,{depth:d[2],bevelEnabled:false});gm.translate(0,0,-d[2]/2);add(g,gm,0x9b3d2e,0,0,0,0,.8)};
+B.load=function(g,d){tm(add(g,bx(d[0],d[1],d[2]),0xffffff,0,0,0,0,.8),wood());[-1,1].forEach(function(a){[-1,1].forEach(function(b){add(g,box(.06,d[1]+.02,.06),0x30343a,a*d[0]/2,0,b*d[2]/2,.8,.4)})});add(g,box(d[0]+.02,.07,d[2]+.02),0x30343a,0,0,0,.8,.4)};
+B.def=function(g){add(g,box(1,.4,1),0x8d98a3,0,.2,0,.5,.5)};
+/* ---------- Design Studio 3D ---------- */
+var GS=rig(document.getElementById('sv3'),{th:.4,ph:.95,rad:11}),WG=new THREE.Group(),rc=new THREE.Raycaster(),mp=new THREE.Vector2(),TX={},lastMode=null;
+GS.sc.add(WG);
+var base=new THREE.Mesh(new THREE.BoxGeometry(14,.2,10),new THREE.MeshPhysicalMaterial({color:0x1f7a4d,roughness:.45,clearcoat:.8,clearcoatRoughness:.25}));base.receiveShadow=true;GS.sc.add(base);
+var DS={found:[2.4,.5,1.2],pil:[.7,1.6,.7],beam:[2.6,.4,.8],truss:[1.3,1.3,.5],cab:[.3,1.6,.3],deck:[2.6,.3,1.1],anch:[.8,.8,.8],wall:[1.8,1.3,.4],roof:[2,.4,1.3],load:[1.2,1,1]};
+function dim(t){return mode==='struct'?(DS[t]||[1,1,1]):[1.5,.7,1.5]}
+function w3(q){return mode==='struct'?V((q.x-300)/40,(350-q.y)/40,0):V((q.x-300)/40,0,(q.y-190)/40)}
+function tex(em,lb){var k=em+'|'+lb;if(TX[k])return TX[k];var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d');x.textAlign='center';x.font='64px sans-serif';x.fillText(em,64,62);
+  x.font='bold 20px sans-serif';x.lineWidth=4;x.strokeStyle='#fff';x.strokeText(lb,64,100);x.fillStyle='#10243a';x.fillText(lb,64,100);var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return TX[k]=t}
+function wireMesh(a,b,color,brk){var d=b.clone().sub(a),len=d.length();if(len<.01)return new THREE.Object3D();
+  var m=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,len,8),new THREE.MeshStandardMaterial({color:color,metalness:.3,roughness:.4,transparent:!!brk,opacity:brk?.45:1}));
+  m.castShadow=true;m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(V(0,1,0),d.normalize());return m}
+function clearG(g){while(g.children.length){var o=g.children[0];g.remove(o);o.traverse(function(n){if(n.geometry&&!n.geometry.userData.keep)n.geometry.dispose();if(n.material)n.material.dispose()})}}
+function draw3d(){var c=cur(),p=c.p;
+  if(lastMode!==mode){lastMode=mode;var s=mode==='struct',st=GS.st;st.th=s?0:.4;st.ph=s?1.4:.95;st.rad=s?13:11;st.tg.set(0,s?3.4:0,0);
+    if(s){base.material.map=null;base.material.color.set(0x2fa866);base.scale.set(18/14,.3/.2,.5);base.position.y=-.15}
+    else{base.material.map=boardTex(mode);base.material.color.set(0xffffff);base.scale.set(1,1,1);base.position.y=-.1}base.material.needsUpdate=true}
+  clearG(WG);
+  p.forEach(function(q,i){var g=new THREE.Group();(B[q.t]||B.def)(g,dim(q.t));g.position.copy(w3(q));WG.add(g);g.updateMatrixWorld(true);
+    var top=new THREE.Box3().setFromObject(g).max.y-g.position.y;g.traverse(function(n){n.userData.i=i});
+    if(sel===i)WG.add(new THREE.BoxHelper(g,0xffc400));
+    var l=lab(q.t),sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex(l[1],q.t==='load'&&mode==='struct'?WT+' kg':l[2]),transparent:true,depthTest:false}));
+    sp.scale.set(1.5,1.5,1);sp.position.y=top+.55;sp.userData.i=i;g.add(sp)});
+  c.w.forEach(function(w,i){var a=p[w[0]],b=p[w[1]];if(!a||!b)return;var A=w3(a),Bp=w3(b),t=(TT.m===mode&&TT.n===p.length&&TT.w===c.w.length)?TT.tint[i]:null;
+    if(mode!=='struct'){A.y=.32;Bp.y=.32}var m=wireMesh(A,Bp,t&&t!=='brk'?t:'#1d6fe0',t==='brk');m.userData.w=i;WG.add(m)})}
+var dp=false;window.draw=function(){if(dp)return;dp=true;requestAnimationFrame(function(){dp=false;try{draw3d()}catch(e){console.error(e)}document.getElementById('scheck').textContent=review()})};
+function ndc(e){var r=GS.cv.getBoundingClientRect();mp.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height*2-1));rc.setFromCamera(mp,GS.cam)}
+function hitPlane(e){ndc(e);var pt=V(0,0,0);return rc.ray.intersectPlane(mode==='struct'?new THREE.Plane(V(0,0,1),0):new THREE.Plane(V(0,1,0),-.3),pt)?pt:null}
+function claim(e){var c=cur();ndc(e);var hs=rc.intersectObjects(WG.children,true),h=null,k;
+  for(k=0;k<hs.length;k++){var u=hs[k].object.userData;if(u.i!==undefined||u.w!==undefined){h=u;break}}
+  if(!h)return null;var i=h.i,noop=function(){};
+  if(h.w!==undefined){if(tool==='del'){c.w.splice(h.w,1);draw()}return noop}
+  if(tool==='move'){var s0=hitPlane(e),off=s0?w3(c.p[i]).sub(s0):V(0,0,0);
+    return function(ev){var q=hitPlane(ev);if(!q)return;var pp=c.p[i],X0=q.x+off.x,Y0=mode==='struct'?q.y+off.y:q.z+off.z;pp.x=cl(Math.round((X0*40+300)/10)*10,34,566);pp.y=mode==='struct'?cl(Math.round((350-Y0*40)/10)*10,30,350):cl(Math.round((Y0*40+190)/10)*10,30,350);draw()}}
+  if(tool==='wire'){if(sel===null)sel=i;else{if(sel!==i&&!c.w.some(function(x){return (x[0]===sel&&x[1]===i)||(x[0]===i&&x[1]===sel)}))c.w.push([sel,i]);sel=null}draw();return noop}
+  c.p.splice(i,1);c.w=c.w.filter(function(x){return x[0]!==i&&x[1]!==i}).map(function(x){return [x[0]>i?x[0]-1:x[0],x[1]>i?x[1]-1:x[1]]});draw();return noop}
+orbit(GS,claim);fsInit('studio','sx','sov');draw();
+/* ---------- Reaction Lab 3D ---------- */
+var GR=rig(document.getElementById('bk3'),{th:.5,ph:1.25,rad:9.5});GR.st.tg.set(0,-.2,0);
+tm(add(GR.sc,bx(14,.4,8),0xffffff,0,-1.9,0,0,.7),wood());
+var bk=new THREE.Group();GR.sc.add(bk);
+var gl=add(bk,new THREE.CylinderGeometry(1.45,1.25,3.4,48,1,true),0xcfe8ff,0,0,0,0,.05);gl.material.side=THREE.DoubleSide;glass(gl,.2);gl.material.envMapIntensity=2;gl.castShadow=false;
+glass(add(bk,cyl(1.25,.1,48),0xcfe8ff,0,-1.65,0,0,.05),.35);glass(add(bk,tor(1.45,.05),0xe6f3ff,0,1.7,0,0,.05,X),.6);
+for(var tk=1;tk<=4;tk++)add(bk,box(.4,.025,.02),0xffffff,0,-1.6+tk*.62,1.27+tk*.037,0,.5);
+var liq=glass(add(bk,cyl(1.22,1.8,40,1.36),0xcfe8f3,0,-.8,0,.1,.2),.85),men=glass(add(bk,cyl(1.36,.04,40),0xe3f2fa,0,.1,0,.1,.1),.7);
+liq.material=new THREE.MeshPhysicalMaterial({color:0xcfe8f3,roughness:.06,clearcoat:1,clearcoatRoughness:.05,transparent:true,opacity:.84,depthWrite:false});var gl2=add(bk,new THREE.CylinderGeometry(1.4,1.2,3.3,48,1,true),0xcfe8ff,0,.02,0,0,.02);gl2.material.side=THREE.BackSide;glass(gl2,.12);gl2.castShadow=false;var rod=glass(add(bk,cyl(.05,3.6,10),0xe6f3ff,.5,.3,.6,0,.05,[.12,0,-.1]),.5);
+var FL=new THREE.Group(),BG=new THREE.Group(),PG=new THREE.Group(),FG=new THREE.Group(),SG=new THREE.Group(),strip=null,rate=.03;[BG,PG,FG,SG,FL].forEach(function(x){bk.add(x)});
+var heat=new THREE.PointLight(0xff8a30,0,9),flash=new THREE.PointLight(0xffffff,0,12),fm=new THREE.Mesh(new THREE.SphereGeometry(1.1,16,16),new THREE.MeshBasicMaterial({color:0xfff2a8,transparent:true,opacity:.55}));
+heat.position.set(0,-1.2,0);fm.position.set(0,-.4,0);fm.visible=false;GR.sc.add(heat);GR.sc.add(flash);GR.sc.add(fm);
+function bottle(x){var b=new THREE.Group();b.position.set(x,-1.7,-1.5);GR.sc.add(b);var body=glass(add(b,cyl(.55,1.4,28),0xd7c08a,0,.7,0,0,.1),.8);glass(add(b,cyl(.2,.4,16),0xd7c08a,0,1.55,0,0,.1),.8);add(b,cyl(.26,.22,16),0x15171a,0,1.85,0,0,.5);
+  var sp=new THREE.Sprite(new THREE.SpriteMaterial({transparent:true}));sp.scale.set(1.3,1.3,1);sp.position.set(0,.8,.7);b.add(sp);b.userData.body=body;b.userData.sp=sp;return b}
+var BA=bottle(-3.6),BB=bottle(3.6);
+function bottles(){[['ra',BA],['rb',BB]].forEach(function(k){var key=document.getElementById(k[0]).value,s=SUB[key];k[1].userData.sp.material.map=tex('🧪',s[1]);k[1].userData.sp.material.needsUpdate=true;k[1].userData.body.material.color.copy(col(key))})}
+function col(t){var h=0;for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))%360;return new THREE.Color().setHSL(h/360,.55,.6)}
+['ra','rb'].forEach(function(id){document.getElementById(id).addEventListener('change',bottles)});bottles();
+var MET={mg:0xdddddd,zn:0xaab4bd,fe:0x73777c,na:0xd0d0c8};
+function rpos(r){var a=rnd(2*PI),d=Math.sqrt(Math.random())*r;return [Math.cos(a)*d,Math.sin(a)*d]}
+window.rxFX=function(o,a,b){clearG(BG);clearG(PG);clearG(FG);clearG(SG);clearG(FL);if(strip){bk.remove(strip);strip=null}liq.material.color.set(0xcfe8f3);men.material.color.set(0xe3f2fa);heat.intensity=0;flash.intensity=0;fm.visible=false;if(!o)return;
+  var i,q,m=MET[a]!=null?a:MET[b]!=null?b:null;if(o.c){liq.material.color.set(o.c);men.material.color.set(o.c)}
+  if(m){strip=add(bk,box(.3,1.7,.1),MET[m],.3,-.75,0,.95,.3);rate=o.b?.07:.02;if(o.p&&o.p!=='#ffffff')strip.material.color.set(o.p)}
+  for(i=0;i<o.b*14;i++){q=rpos(.95);var bb=new THREE.Mesh(sph(.05+rnd(.06)),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0,metalness:0,transparent:true,opacity:.55,envMapIntensity:2.5}));bb.position.set(q[0],-1.6+rnd(1.7),q[1]);bb.userData.v=.5+rnd(.9);BG.add(bb)}
+  if(o.b>=2)for(i=0;i<36;i++){q=rpos(1.25);var f=new THREE.Mesh(sph(.12+rnd(.08)),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.3}));f.scale.y=.6;f.position.set(q[0],.12+rnd(.06),q[1]);FG.add(f)}
+  if(o.p)for(i=0;i<40;i++){q=rpos(1);var s=new THREE.Mesh(sph(.07+rnd(.05)),Mt(o.p,0,.7));s.position.set(q[0],-1.58+rnd(.15),q[1]);PG.add(s)}
+  if(o.h>0){heat.color.set(0xff8a30);heat.intensity=.8*o.h;for(i=0;i<o.h*8;i++){var st=new THREE.Sprite(new THREE.SpriteMaterial({map:puff(),transparent:true,opacity:.3,depthWrite:false}));q=rpos(.9);st.position.set(q[0],.3+rnd(2.2),q[1]);st.userData.v=.4+rnd(.5);SG.add(st)}}
+  else if(o.h<0){heat.color.set(0x66ccff);heat.intensity=.8}
+  if(o.f){flash.intensity=2.5;fm.visible=true;for(i=0;i<7;i++){var fs=new THREE.Sprite(new THREE.SpriteMaterial({map:fireT(),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));q=rpos(.7);fs.position.set(q[0],.5,q[1]);fs.scale.set(1.2,2.2,1);fs.userData.ph=rnd(6);FL.add(fs)}
+    if(m==='mg')for(i=0;i<24;i++){var sk=new THREE.Sprite(new THREE.SpriteMaterial({map:puff(),color:0xfff2a8,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));sk.scale.set(.12,.12,1);sk.position.set(0,.3,0);sk.userData.v=[(Math.random()-.5)*3,1+rnd(3),(Math.random()-.5)*3];FL.add(sk)}}};
+GR.tick=function(dt){FL.children.forEach(function(s){var u=s.userData;if(u.v){s.position.x+=u.v[0]*dt;s.position.y+=u.v[1]*dt;s.position.z+=u.v[2]*dt;u.v[1]-=4*dt;if(s.position.y<.2){s.position.set(0,.3,0);u.v=[(Math.random()-.5)*3,1+Math.random()*3,(Math.random()-.5)*3]}}else{var tt=performance.now()/1000+u.ph;s.scale.set(1.1+.25*Math.sin(tt*9),2+.5*Math.sin(tt*7+1),1)}});BG.children.forEach(function(m){m.position.y+=m.userData.v*dt;if(m.position.y>.05)m.position.y=-1.6});
+  SG.children.forEach(function(m){m.position.y+=m.userData.v*dt;m.scale.setScalar(1+(m.position.y-.3)*.25);if(m.position.y>2.8){m.position.y=.3;m.scale.setScalar(1)}});
+  if(strip){strip.scale.y=Math.max(.2,strip.scale.y-rate*dt);strip.position.y=-1.6+.85*strip.scale.y}
+  if(fm.visible)fm.scale.setScalar(.9+.2*Math.sin(performance.now()/60))};
+orbit(GR,null);fsInit('rlab','rx','rov');resizeAll();
+}catch(err){console.error(err);noGL()}
+})();
+
+(function(){var cb=document.getElementById('coachbox');
+  function o(){cb.classList.add('open');document.body.classList.add('coachopen');var m=document.getElementById('cmsg');m.scrollTop=m.scrollHeight;setTimeout(function(){document.getElementById('cin').focus()},350)}
+  function c(){cb.classList.remove('open');document.body.classList.remove('coachopen')}
+  document.getElementById('orb').onclick=o;document.getElementById('cx').onclick=c;document.addEventListener('keydown',function(e){if(e.key==='Escape')c()})})();
+(function(){try{var u=JSON.parse(localStorage.getItem('bbl_session')||'null');if(!u)return;var p=document.querySelector('.pill'),n=p.parentNode,w=document.createElement('div'),b=document.createElement('button');
+  w.style.cssText='display:flex;gap:8px;align-items:center';p.textContent='Hi, '+u.name;b.className='chip';b.textContent='Log out';b.onclick=function(){localStorage.removeItem('bbl_session');location.href='login.html'};
+  n.replaceChild(w,p);w.appendChild(p);w.appendChild(b)}catch(e){}})();
+var LS={"ai": ["A good AI project starts with one clear question, like 'is this email spam?'. The type of answer (a category, a number or text) decides everything else.~Write your problem in one sentence and name the input and the output.", "Models learn from examples, so bad data means a bad model. Remove duplicates and mistakes, then split the data into training, validation and test sets.~Collect 20 examples by hand in a spreadsheet and mark any that look wrong.", "Start with the simplest model that could work, like a linear model or a decision tree. A simple model that works beats a fancy one you cannot explain.~Open the Code library and read the first AI model example line by line.", "Training adjusts the model to fit examples, and evaluation checks it on data it has never seen. A high training score with a low test score means overfitting.~Run the example, change test_size, and watch the accuracy move.", "Deploying means putting the trained model where it can be used, like an app or a robot. Save the model file and wrap it in a small function that takes input and returns a prediction.~Write a function predict(x) that loads your model and returns an answer.", "Most gains come from better, more varied data, not a bigger model. Look at the mistakes and add examples that cover them.~List three kinds of examples your model gets wrong and collect more of them.", "Real life changes, so a model can slowly get worse. Track its mistakes and retrain when the accuracy drops.~Pick one number to check weekly, like accuracy on the latest 50 examples."], "robot": ["Pick one simple task such as following a line or avoiding walls. Small goals get finished; big goals stall.~Write the robot's job in one sentence and list what it must sense and what it must move.", "The controller is the robot's brain. Arduino is great for simple, reliable control, while Raspberry Pi or ESP32 add power for vision and Wi-Fi.~Compare two boards by price, pins and power use.", "Sensors tell the robot about the world and motors let it act. Match them to the job: a distance sensor to avoid, a light sensor to follow.~Choose one sensor and one motor for your job.", "Motors draw far more current than a controller pin can give, so use a motor driver and a separate battery. Join all the grounds together.~Draw a power diagram: battery, driver, motors, controller.", "Test each part alone first (motor spins, sensor reads), then combine them. Small steps make bugs easy to find.~Run the obstacle-avoiding car code from the Code library one block at a time.", "Feedback control compares what the robot senses with what it wants, then corrects the difference. PID is the classic method.~Use the PID code from the library to keep a value near a target.", "Robots fail: batteries die and wires come loose. Add a stop button and a low-battery cutoff before the first run.~List three ways your robot could fail and one safety fix for each."], "elec": ["Voltage pushes current through resistance, and Ohm's law ties them together: V = I × R. Think of voltage as water pressure and current as the flow.~Use the Ohm's Law calculator: what current flows at 5 V through 220 Ω?", "Resistors limit current, capacitors store charge, diodes allow one-way flow, and LEDs light up. Each has a symbol you will see on diagrams.~Open Circuit mode in the Design Studio and name every part.", "A breadboard lets you build circuits without soldering. The holes in each row connect in groups, and the side rails carry power.~Build a battery, resistor and LED circuit in the Design Studio, then for real.", "A multimeter measures voltage, current and resistance. Always check a circuit before powering it and set the dial to the right range.~Measure a battery's voltage and a resistor's value.", "A PCB is a printed board that holds a circuit permanently. Design it in free software like KiCad and order it from a board maker.~Sketch your circuit on paper, then redraw it in KiCad.", "Stay with batteries and low voltage while learning. Never work on mains power, never short a battery, and ask an adult when unsure.~Write a three-item safety checklist for your workspace.", "A transistor is a switch controlled by a tiny signal, so a small pin can switch a motor or lamp. It is the building block of every chip.~Wire a transistor between a battery and an LED in the Design Studio.", "PWM switches power on and off very fast. The longer it stays on, the brighter the LED or the faster the motor.~Run the Fade an LED example from the Code library."], "both": ["A camera plus an image model lets a robot recognize objects. Train on pictures taken from the robot's own camera.~Take 20 photos of two objects and label them.", "Big models do not fit on small boards. TFLite and ONNX compress models so they can run on a Raspberry Pi.~Check how big your model file is and what board could run it.", "Turn each prediction into a motor action, like 'obstacle' means turn left. Keep the rules simple at first.~Write a table with predictions in one column and actions in the other.", "A simulator lets you crash a robot a thousand times for free. Test ideas in Gazebo or PyBullet before using hardware.~Pick a simulator and list what you would test first."], "phys": ["Physics uses SI units: meters, kilograms and seconds. A vector has size and direction, while speed has only size.~Convert 90 km/h to m/s (divide by 3.6).", "Newton's laws: things keep moving unless a force acts, F = m × a, and every action has an equal and opposite reaction. A free-body diagram shows all forces on one object.~Use the Force and energy calculator with 2 kg and 3 m/s².", "Energy is never created or destroyed, only changed. Momentum (mass × speed) is also conserved in collisions.~Use the Projectile calculator and compare the range at 30°, 45° and 60°.", "Waves carry energy, heat flows from hot to cold, and charges flow in circuits. These ideas connect sound, light, engines and electronics.~Find a wave's wavelength using speed = frequency × wavelength.", "Relativity and quantum physics describe the very fast and the very small. They sound strange but power GPS, lasers and chips.~Try the free PhET double-slit simulation."], "math": ["Algebra uses letters for unknown numbers. You solve an equation by doing the same thing to both sides.~Solve 3x + 5 = 20, then check by putting x back in.", "Sine, cosine and tangent link the angles of a right triangle to its side lengths. Robots and games use them constantly.~A 5 m ladder leans at 60°. How high does it reach? (5 × sin 60°)", "A function turns inputs into outputs. A derivative tells how fast it changes, and an integral adds up the total.~Sketch speed against time for a car and describe its acceleration.", "Vectors and matrices store lists of numbers and transform them, which is how images and AI work.~Rotate the point (1, 0) by 90°. Where does it go?", "Probability measures chance, and statistics describes data with the mean, median and spread.~Use Quick statistics on your last five test scores."], "emech": ["Statics studies forces on things that are not moving. If a structure stands, all the forces on it balance.~Draw a free-body diagram of a book on a table.", "Dynamics studies how forces make things speed up, slow down and spin.~Time a toy car over 1 m and work out its speed.", "Machines use gears, bearings, springs, shafts and fasteners. A small gear driving a big gear trades speed for torque.~Use the Gear ratio calculator, then build it in the Machine mode of the Design Studio.", "CAD lets you model parts on screen before making them. FreeCAD is free.~Model a 50 mm cube with a hole in FreeCAD.", "Build, test, measure and improve is the engineering cycle.~Check a lever with the Lever balance calculator, then redesign it for less effort."], "civil": ["Dead loads are the structure's own weight and live loads are people and vehicles. Parts are either pulled (tension) or pushed (compression).~List all the loads on a bridge.", "Wood is light, steel is strong in tension, and concrete is strong in compression. Engineers pick by job and cost.~Rank three materials for a footbridge and explain why.", "Triangles are rigid, so trusses spread force through many members.~Build a triangle bridge in Structure mode and run the Weight test.", "Soil must support the load, so foundations spread weight over a wide area.~Why is a foundation wider than the wall above it? Answer in one sentence.", "Sketch, model, load-test, and learn from where it fails.~Make your Structure design survive 2000 kg."], "chem": ["Atoms bond using their outer electrons, and the periodic table groups elements that behave alike.~Find sodium and chlorine on the periodic table.", "A balanced equation has equal numbers of each atom on both sides. Reactions can release gas, heat, color or solids.~Mix baking soda and vinegar in the Reaction Lab and read the equation.", "A mole is a counting unit for atoms. Stoichiometry uses balanced equations to predict how much product you get.~How many grams is 2 moles of water? (18 g per mole)", "Chemical plants move heat and fluids through pipes and reactors.~Explain why a hot drink cools faster in a metal cup.", "Ventilation, protective gear and small first batches keep chemistry safe.~Read the safety note for each pair in the Reaction Lab."], "aero": ["Lift must beat weight and thrust must beat drag. Wings make lift by pushing air downward.~Fold a paper plane and note how it flies.", "An airfoil's curved top and angle change how much lift it makes.~Test two wing shapes with a fan and a paper strip.", "Propellers, jets and rockets all push mass backward to move forward (Newton's third law).~Let go of a blown-up balloon and explain why it flies.", "An orbit is falling around a planet while moving sideways fast enough to keep missing it.~Use the Projectile calculator and imagine a speed so high the ground curves away.", "Test small, change one thing at a time, and always fly with adult help.~Plan a paper-glider test with three variations."], "soft": ["Start with Python or JavaScript and write tiny programs often. Variables, loops and functions are the base.~Write a program that prints the numbers 1 to 10.", "Lists, trees and sorting are tools. Pick the structure that makes your problem easy.~Sort five numbers by hand, then in code.", "Projects teach more than tutorials. Make a game, a website and a small app.~Plan a tiny game: what does the player do?", "Git records every change so you can undo mistakes and share work on GitHub.~Make a commit with a clear message in your repo.", "Test your code, ask for feedback, and publish something real.~Share one project in the Community Plaza."], "bio": ["The heart pumps, the lungs swap gases, muscles pull and nerves send signals.~Find your pulse and count the beats in 30 seconds.", "Sensors turn body signals into numbers you can read, like pulse, temperature and muscle activity.~Record your pulse before and after jumping.", "Bones act as levers and joints act as hinges, so mechanics applies to bodies.~Compare your forearm to the Lever balance calculator.", "Pacemakers, implants and prosthetic limbs combine sensors, motors and safe materials.~Design a simple prosthetic finger on paper.", "Health devices need careful testing and rules to protect people.~List three tests a new device should pass."], "env": ["Water, carbon and energy move in cycles, and engineers work with those cycles.~Draw the water cycle with three human impacts.", "Filters, treatment plants and recycling reduce harm.~Make a sand-and-charcoal filter and compare the water before and after.", "Solar, wind and hydro make energy, and batteries store it.~Use the Battery life calculator to size a small solar lamp.", "Measure first: energy, water and waste data show where to improve.~Track your home electricity use for a week.", "Build a solar cooker or a filter and test it with real numbers.~Record the temperature every 10 minutes."], "mats": ["Bonding explains why metals conduct, ceramics resist heat and polymers bend.~Sort five household objects by material type.", "Stress is force per area and strain is stretch. A stiff material stretches very little.~Hang weights from rubber bands and measure the stretch.", "Metals conduct heat and electricity, while most plastics and ceramics insulate.~Touch metal and wood at room temperature. Why does metal feel colder?", "Repeated loading can crack a material even below its limit. This is called fatigue.~Bend a paperclip back and forth and count the bends until it breaks.", "Match the material to the job, weight, cost and safety.~Choose materials for a bike frame and justify them."], "ind": ["Mapping each step of a task shows where the time goes.~Draw a flowchart of making a sandwich.", "Measure time, delays and mistakes before changing anything.~Time a chore three times and average the results.", "Lean thinking removes waste like waiting, extra motion and rework.~Rearrange your desk and time the task again.", "Statistics catch defects early. The mean and the spread tell you if a process is stable.~Use Quick statistics on five timing results.", "Plan people, machines and materials so work flows without gaps.~Schedule a three-person pizza assembly line."]};
+var QZ={"ai": [["What does overfitting mean?", "The model memorizes training data and fails on new data", "The model trains too slowly", "The model uses too little data"], ["Which data should you test on?", "Data the model has never seen", "Data used in training", "Any data at all"]], "robot": [["Why use a motor driver?", "Motors need more current than a pin can give", "It makes the robot look nicer", "It stores the code"], ["Why join all the grounds together?", "Signals need a shared reference", "It saves wire", "It charges the battery"]], "elec": [["Ohm's law is...", "V = I × R", "V = I + R", "V = R ÷ I"], ["What does a resistor in series with an LED do?", "Limits the current", "Stores charge", "Makes it brighter"]], "both": [["Why shrink a model for a robot?", "Small boards have limited memory", "Smaller is always more accurate", "To hide the code"], ["Why simulate first?", "Crashes are free", "It is required by law", "It is faster to type"]], "phys": [["A 2 kg object accelerates at 3 m/s². The force is...", "6 N", "5 N", "1.5 N"], ["Energy in a closed system is...", "Conserved", "Always lost", "Doubled each second"]], "math": [["Solve 3x + 5 = 20", "x = 5", "x = 8", "x = 15"], ["sin 30° equals...", "0.5", "1", "0"]], "emech": [["A small gear driving a big gear gives...", "More torque, less speed", "More speed, less torque", "No change"], ["Statics studies...", "Forces on things that are not moving", "Only very fast things", "Heat only"]], "civil": [["Which shape is rigid?", "Triangle", "Square", "Rectangle"], ["Concrete is strongest in...", "Compression", "Tension", "Twisting"]], "chem": [["A balanced equation has...", "Equal atoms on both sides", "More products than reactants", "No reactants"], ["Baking soda plus vinegar releases...", "Carbon dioxide", "Hydrogen", "Chlorine"]], "aero": [["For flight, lift must beat...", "Weight", "Thrust", "Drag"], ["A rocket moves by...", "Pushing mass backward", "Pulling on the air", "Using magnets"]], "soft": [["Git is used to...", "Track changes", "Draw circuits", "Cool processors"], ["A loop...", "Repeats code", "Deletes code", "Saves files"]], "bio": [["Bones act like...", "Levers", "Batteries", "Lenses"], ["A sensor...", "Turns signals into numbers", "Makes medicine", "Cuts bone"]], "env": [["A filter...", "Removes particles", "Adds energy", "Heats water"], ["A battery...", "Stores energy", "Makes energy from nothing", "Cleans the air"]], "mats": [["Stress is...", "Force per area", "Stretch", "Weight only"], ["Fatigue is...", "Cracking from repeated loading", "Melting", "Painting"]], "ind": [["Lean thinking removes...", "Waste", "Customers", "Quality"], ["The mean tells you...", "The average", "The biggest value", "The fastest time"]]};
+
+(function(){
+var PK='bbl_prog_'+(function(){try{var u=JSON.parse(localStorage.getItem('bbl_session')||'null');return u?u.email:'guest'}catch(e){return 'guest'}})(),curK='ai',L=document.createElement('div');
+L.id='lesson';document.body.appendChild(L);
+function getP(){try{return JSON.parse(localStorage.getItem(PK)||'{}')}catch(e){return {}}}
+function setP(p){try{localStorage.setItem(PK,JSON.stringify(p))}catch(e){}}
+function isDone(k,i){var p=getP();return !!(p[k]&&p[k].indexOf(i)>-1)}
+function mark(k,i){var p=getP();p[k]=p[k]||[];if(p[k].indexOf(i)<0)p[k].push(i);setP(p);if(window.dailyHook)dailyHook(k,i)}
+function rec(k,i){try{var key='bbl_recent_'+PK.slice(9),a=JSON.parse(localStorage.getItem(key)||'[]');a=a.filter(function(x){return x!==k+':'+i});a.unshift(k+':'+i);localStorage.setItem(key,JSON.stringify(a.slice(0,8)))}catch(e){}}
+function closeL(){L.classList.remove('open');document.documentElement.style.overflow=''}
+show=function(k){curK=k;document.querySelectorAll('#tabs .tab').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)});
+  var p=getP(),n=D[k].length,d=(p[k]||[]).length,qs=p['q_'+k];
+  steps.innerHTML='<div class="lprog">'+d+' of '+n+' lessons done'+(qs!==undefined?' · quiz best '+qs+'/'+QZ[k].length:'')+'<div class="bar"><i style="width:'+Math.round(d/n*100)+'%"></i></div></div>'+
+  D[k].map(function(s,i){var t=s.split('|');return '<button class="step lstep" data-i="'+i+'" style="animation-delay:'+(i*60)+'ms"><div class="num">'+(isDone(k,i)?'✓':i+1)+'</div><div><b>'+t[0]+'</b><small>'+t[1]+'</small></div><span class="go">Open lesson →</span></button>'}).join('');if(window.dashRefresh)dashRefresh()};
+steps.onclick=function(e){var b=e.target.closest('.lstep');if(b)openL(curK,+b.dataset.i)};
+function openL(k,i){rec(k,i);var t=D[k][i].split('|'),x=(LS[k]&&LS[k][i]||'').split('~'),n=D[k].length;
+  L.innerHTML='<div class="lin"><div class="lbar"><button class="btn xbtn2" id="lx">✕ Close</button><span>'+N[k]+' · Lesson '+(i+1)+' of '+n+'</span></div>'+
+  '<h2 class="lt">'+t[0]+'</h2><div class="card lc"><b>What you will learn</b><p>'+t[1]+'</p></div>'+
+  '<div class="card lc"><b>Explained</b><p>'+(x[0]||t[1])+'</p></div>'+
+  '<div class="card lc try"><b>🛠 Try it</b><p>'+(x[1]||'Practice this idea in the Design Studio or ask the AI coach.')+'</p></div>'+
+  '<div class="lbtns"><button class="btn" id="ldone">'+(isDone(k,i)?'✓ Completed':'Mark as done')+'</button><button class="btn" id="lask" style="background:var(--c2)">🤖 Ask the AI coach</button></div>'+
+  '<div class="lnav"><button class="chip" id="lprev"'+(i?'':' disabled')+'>← Previous</button><button class="chip" id="lnext">'+(i<n-1?'Next lesson →':'Take the quiz →')+'</button></div></div>';
+  document.getElementById('lx').onclick=closeL;
+  document.getElementById('ldone').onclick=function(){mark(k,i);this.textContent='✓ Completed';show(k)};
+  document.getElementById('lprev').onclick=function(){if(i)openL(k,i-1)};
+  document.getElementById('lnext').onclick=function(){if(i<n-1)openL(k,i+1);else quiz(k)};
+  document.getElementById('lask').onclick=function(){closeL();document.getElementById('orb').click();ask('Explain "'+t[0]+'" in '+N[k].replace(/^\S+\s/,'')+' like I am a beginner, with a small example.')};
+  L.classList.add('open');document.documentElement.style.overflow='hidden';L.scrollTop=0}
+function quiz(k){var qs=QZ[k]||[],sc=0,ans=0,w=document.createElement('div');w.className='lin';
+  w.innerHTML='<div class="lbar"><button class="btn xbtn2" id="lx2">✕ Close</button><span>'+N[k]+' · Quiz</span></div><h2 class="lt">Check what you learned</h2>';
+  var res=document.createElement('div');res.className='card lc';res.style.display='none';
+  qs.forEach(function(q){var c=document.createElement('div'),h=document.createElement('b'),o=q.slice(1).map(function(t,j){return {t:t,ok:j===0}}),a,r,tmp;c.className='card lc';h.textContent=q[0];c.appendChild(h);
+    for(a=o.length-1;a>0;a--){r=Math.floor(Math.random()*(a+1));tmp=o[a];o[a]=o[r];o[r]=tmp}
+    o.forEach(function(op){var b=document.createElement('button');b.className='opt';b.textContent=op.t;if(op.ok)b.dataset.ok='1';
+      b.onclick=function(){if(c.dataset.d)return;c.dataset.d='1';ans++;if(op.ok){sc++;b.classList.add('good')}else{b.classList.add('bad');c.querySelector('[data-ok]').classList.add('good')}
+        if(ans===qs.length){var p=getP();p['q_'+k]=Math.max(p['q_'+k]||0,sc);setP(p);show(k);res.style.display='block';res.innerHTML='<b>Your score: '+sc+' / '+qs.length+'</b><p>'+(sc===qs.length?'🏅 Perfect! You are ready for the next field or a project.':'Good effort! Reopen the lessons and try again.')+'</p>'}};c.appendChild(b)});
+    w.appendChild(c)});
+  w.appendChild(res);L.innerHTML='';L.appendChild(w);document.getElementById('lx2').onclick=closeL;L.scrollTop=0}
+document.getElementById('orb').addEventListener('click',closeL);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeL()});
+window.BB={openL:openL,quiz:quiz,getP:getP};show('ai');
+})();
+
+(function(){
+var wrap=document.querySelector('.wrap'),hd=wrap.querySelector('header'),ft=wrap.querySelector('footer'),S=null;
+try{S=JSON.parse(localStorage.getItem('bbl_session')||'null')}catch(e){}
+var uname=(S&&S.name)||'maker',uid=(S&&S.email)||'guest',fields=Object.keys(N),tab='path',isOpen=false,fld='ai';
+try{fld=localStorage.getItem('bbl_field_'+uid)||'ai'}catch(e){}if(!D[fld])fld='ai';
+function mk(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e}
+var pgs={};['home','learn','build','community','class','profile'].forEach(function(k){pgs[k]=mk('div','pg');pgs[k].id='pg-'+k});
+var nodes=[],grp=null,list=[],n;for(n=hd.nextElementSibling;n&&n!==ft;n=n.nextElementSibling)nodes.push(n);
+nodes.forEach(function(n){if(n.id==='coachbox'){document.body.appendChild(n);return}
+  var h=n.tagName==='H2'?n:(n.classList.contains('stu')?n.querySelector('h2'):null);if(h||!grp){grp={t:h?h.textContent:'',n:[]};list.push(grp)}grp.n.push(n)});
+list.forEach(function(g){var t=g.t.toLowerCase(),k=/community|plaza/.test(t)?'community':/checklist/.test(t)?'home':/engineer|projects|concepts|code library|tools/.test(t)?'learn':'build';g.n.forEach(function(x){pgs[k].appendChild(x)})});
+/* top tabs */
+var tn=mk('div','topnav');[['home','🏠','Dashboard'],['learn','📚','Learn'],['build','🛠','Build'],['community','👥','Community'],['class','🎒','My class'],['profile','👤','Profile']].forEach(function(t){var b=mk('button','tn','<span>'+t[1]+'</span>'+t[2]);b.dataset.p=t[0];b.onclick=function(){goPage(t[0])};tn.appendChild(b)});
+function goPage(p,id){Object.keys(pgs).forEach(function(k){pgs[k].classList.toggle('on',k===p)});[].forEach.call(tn.children,function(b){b.classList.toggle('on',b.dataset.p===p)});
+  try{sessionStorage.setItem('bbl_pg',p)}catch(e){}window.dispatchEvent(new Event('resize'));
+  setTimeout(function(){var t=id&&document.getElementById(id);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo(0,0)},60);if(p==='home')dashRefresh();if(p==='profile'&&window.profRefresh)profRefresh();if(p==='class'&&window.classRefresh)classRefresh()}
+window.goPage=goPage;
+/* dashboard */
+var top=mk('section','dtop'),r0=mk('div','drow0'),av=mk('div','av'),hi=mk('div','hi'),hr=new Date().getHours(),nm=mk('b');
+av.textContent=uname.charAt(0).toUpperCase();nm.textContent=uname;hi.appendChild(document.createTextNode('Hi '));hi.appendChild(nm);hi.appendChild(document.createTextNode(', good '+(hr<12?'morning':hr<18?'afternoon':'evening')+'!'));
+r0.appendChild(av);r0.appendChild(hi);top.appendChild(r0);top.appendChild(mk('div','ask','What should I work on?'));
+var grid=mk('div','dgrid'),main=mk('div'),tabsEl=mk('div','dtabs'),body=mk('div','dbody'),side=mk('aside','dside');
+[['teacher','🎓 From your teacher'],['path','⭐ From your path'],['recent','🕘 Recent'],['rec','🧭 Recommended']].forEach(function(t){var b=mk('button','dt',t[1]);b.dataset.t=t[0];b.onclick=function(){tab=t[0];dashRefresh()};tabsEl.appendChild(b)});
+main.appendChild(tabsEl);main.appendChild(body);grid.appendChild(main);grid.appendChild(side);
+var tiles=mk('div','dtiles');[['🛠','Design Studio',function(){goPage('build','studio')}],['🧪','Reaction Lab',function(){goPage('build','rlab')}],['👥','Community',function(){goPage('community','plaza')}],['🤖','Ask the AI coach',function(){document.getElementById('orb').click()}]].forEach(function(t){var b=mk('button','dtile','<span>'+t[0]+'</span>'+t[1]);b.onclick=t[2];tiles.appendChild(b)});
+pgs.home.insertBefore(tiles,pgs.home.firstChild);pgs.home.insertBefore(grid,tiles);pgs.home.insertBefore(top,grid);
+function genRow(star,title,sub,icon,fn){var r=mk('button','lrow'),t=mk('div'),a=mk('div','tt'),b=mk('small'),s=mk('span','st'),ic=mk('span','ic');s.textContent=star;a.textContent=title;b.textContent=sub;ic.textContent=icon;
+  t.appendChild(a);t.appendChild(b);r.appendChild(s);r.appendChild(t);r.appendChild(ic);r.onclick=fn;return r}
+function lrow(k,i){var d=BB.getP()[k]||[];return genRow(d.indexOf(i)>-1?'★':'☆',D[k][i].split('|')[0],N[k]+' · Lesson '+(i+1),'📖',function(){BB.openL(k,i)})}
+function nextIdx(k){var d=BB.getP()[k]||[];for(var i=0;i<D[k].length;i++)if(d.indexOf(i)<0)return i;return -1}
+window.dashRefresh=function(){
+  [].forEach.call(tabsEl.children,function(b){b.classList.toggle('on',b.dataset.t===tab)});body.innerHTML='';
+  var p=BB.getP(),done=p[fld]||[],ni=nextIdx(fld),i;
+  if(tab==='path'){var bar=mk('div','dbar','Suggested by'),sel=mk('select');
+    fields.forEach(function(k){var o=mk('option');o.value=k;o.textContent=N[k];if(k===fld)o.selected=true;sel.appendChild(o)});
+    sel.onchange=function(){fld=sel.value;try{localStorage.setItem('bbl_field_'+uid,fld)}catch(e){}if(window.show)show(fld);dashRefresh()};bar.appendChild(sel);body.appendChild(bar);
+    var comp=mk('div','dcomp','<span>Completed ✓ <small style="color:var(--muted)">('+done.length+' mastered lessons)</small></span><b>'+(isOpen?'−':'+')+'</b>');comp.onclick=function(){isOpen=!isOpen;dashRefresh()};body.appendChild(comp);
+    if(isOpen)done.slice().sort(function(a,b){return a-b}).forEach(function(x){body.appendChild(lrow(fld,x))});
+    for(i=0;i<D[fld].length;i++)if(done.indexOf(i)<0)body.appendChild(lrow(fld,i));
+    if(ni<0)body.appendChild(genRow('🏅','Take the '+N[fld]+' quiz','You finished every lesson','🧠',function(){BB.quiz(fld)}))}
+  else if(tab==='teacher'){if(window.ClassAPI)ClassAPI.fill(body)}
+  else if(tab==='recent'){var rc=[];try{rc=JSON.parse(localStorage.getItem('bbl_recent_'+uid)||'[]')}catch(e){}
+    rc.forEach(function(x){var a=x.split(':');if(D[a[0]]&&D[a[0]][+a[1]])body.appendChild(lrow(a[0],+a[1]))});
+    if(!rc.length)body.appendChild(mk('p','note','Lessons you open will show up here.'))}
+  else{if(ni>=0)body.appendChild(lrow(fld,ni));
+    fields.filter(function(k){return k!==fld&&nextIdx(k)>=0}).slice(0,3).forEach(function(k){body.appendChild(lrow(k,nextIdx(k)))});
+    body.appendChild(genRow('🛠','Design a circuit in 3D','Build · Design Studio','🧱',function(){goPage('build','studio')}));
+    body.appendChild(genRow('🧪','Mix chemicals safely','Build · Reaction Lab','⚗️',function(){goPage('build','rlab')}));
+    body.appendChild(genRow('👥','Share what you made','Community Plaza','💬',function(){goPage('community','plaza')}))}
+  var tot=0;fields.forEach(function(k){tot+=(p[k]||[]).length});side.innerHTML='';
+  var h=mk('h3');h.textContent='Keep learning, '+uname+'!';var pp=mk('p');pp.textContent=(ni>=0?'Next up in '+N[fld]+': '+D[fld][ni].split('|')[0]+'. ':'You finished every lesson in '+N[fld]+'. Take the quiz! ')+'You have finished '+tot+' lessons so far.';
+  var lk=mk('a',null,'See your learning path ›');lk.onclick=function(){if(window.show)show(fld);goPage('learn','roadmap')};
+  var go=mk('button','cta','Continue learning ›');go.onclick=function(){ni>=0?BB.openL(fld,ni):BB.quiz(fld)};
+  side.appendChild(mk('div','big','🚀'));side.appendChild(h);side.appendChild(pp);side.appendChild(lk);side.appendChild(go)};
+wrap.insertBefore(tn,hd);['home','learn','build','community','class','profile'].forEach(function(k){wrap.insertBefore(pgs[k],ft)});
+var h0=(location.hash||'').slice(1),st0='home';try{st0=sessionStorage.getItem('bbl_pg')||'home'}catch(e){}
+goPage(pgs[h0]?h0:pgs[st0]?st0:'home');
+})();
+
+(function(){
+var S=null;try{S=JSON.parse(localStorage.getItem('bbl_session')||'null')}catch(e){}
+var DK='bbl_daily_'+((S&&S.email)||'guest'),pool=[],top=document.querySelector('.dtop'),card=document.createElement('div'),shown=-1;
+function dayNo(){return Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5)}
+function hsh(x){var h=7;for(var i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))>>>0;return h}
+Object.keys(D).forEach(function(k){D[k].forEach(function(x,i){pool.push([k,i])})});
+pool.sort(function(a,b){return hsh(a[0]+':'+a[1])-hsh(b[0]+':'+b[1])||(a[0]<b[0]?-1:1)});
+function today(){return pool[dayNo()%pool.length]}
+function rd(){try{return JSON.parse(localStorage.getItem(DK)||'[]')}catch(e){return []}}
+function streak(){var d=rd(),t=dayNo(),c=0,x=d.indexOf(t)>-1?t:t-1;while(d.indexOf(x)>-1){c++;x--}return c}
+function cd(){var n=new Date(),m=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1),ms=m-n,e=document.getElementById('dcd');if(e)e.textContent='next lesson in '+Math.floor(ms/36e5)+'h '+Math.floor(ms%36e5/6e4)+'m'}
+function render(){var t=today(),done=rd().indexOf(dayNo())>-1,st=streak();shown=dayNo();
+  card.innerHTML='<div><small>🌟 New lesson today</small><b>'+D[t[0]][t[1]].split('|')[0]+'</b><small>'+N[t[0]]+' · Lesson '+(t[1]+1)+' · <span id="dcd"></span></small></div>'+
+  '<div class="dright"><span class="streak">'+(st?'🔥 '+st+'-day streak':'🔥 Start your streak!')+'</span><button class="dgo" id="dstart">'+(done?'✓ Done today · Review':'Start today\'s lesson ›')+'</button></div>';
+  document.getElementById('dstart').onclick=function(){BB.openL(t[0],t[1])};cd()}
+window.dailyHook=function(k,i){var t=today();if(t[0]===k&&t[1]===i){var d=rd(),n=dayNo();if(d.indexOf(n)<0){d.push(n);try{localStorage.setItem(DK,JSON.stringify(d.slice(-400)))}catch(e){}}render()}};
+card.className='daily';if(top)top.appendChild(card);render();
+setInterval(function(){if(dayNo()!==shown)render();else cd()},30000);
+})();
+
+(function(){
+var S=null;try{S=JSON.parse(localStorage.getItem('bbl_session')||'null')}catch(e){}
+var uid=(S&&S.email)||'guest',uname=(S&&S.name)||'maker',TK='bbl_time_'+uid,PRK='bbl_proj_'+uid,SK='bbl_set_'+uid,FK='bbl_first_'+uid,
+MODES={circuit:'⚡ Circuit',robot:'🤖 Robot',logic:'🔣 Logic',mech:'⚙️ Machine',struct:'🌉 Structure'};
+function jget(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function dayNo(){return Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5)}
+function fmt(sec){var m=Math.floor(sec/60);return m<60?m+' min':Math.floor(m/60)+' h '+(m%60)+' min'}
+function mk(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e}
+if(!jget(FK,0))jset(FK,Date.now());
+function applyTheme(v){var r=document.documentElement;if(v==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',v)}
+applyTheme(localStorage.getItem('bbl_theme')||'auto');
+var lastAct=Date.now();['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){addEventListener(ev,function(){lastAct=Date.now()},{passive:true})});
+setInterval(function(){if(document.visibilityState==='visible'&&Date.now()-lastAct<120000){var t=jget(TK,{}),d=dayNo();t[d]=(t[d]||0)+10;Object.keys(t).forEach(function(x){if(+x<d-90)delete t[x]});jset(TK,t)}},10000);
+var sb=document.getElementById('sproj');
+if(sb)sb.onclick=function(){var n=document.getElementById('sname').value.trim();if(!n||!cur().p.length){alert('Name your design and add at least one part first.');return}
+  var a=jget(PRK,[]),pk=pack();a.push({name:n,m:pk.m,p:pk.p,w:pk.w,t:Date.now()});jset(PRK,a.slice(-30));sb.textContent='Saved ✓';setTimeout(function(){sb.textContent='⭐ Save to my projects'},1600)};
+function b64(u){return btoa(String.fromCharCode.apply(null,u))}
+async function hp(pw,salt){var k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return b64(new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:salt,iterations:150000,hash:'SHA-256'},k,256)))}
+var pg=document.getElementById('pg-profile');
+window.profRefresh=function(){
+  var t=jget(TK,{}),d=dayNo(),total=0,p=BB.getP(),st=jget(SK,{goal:15}),projs=jget(PRK,[]),tot=0,done=0,i,daily=jget('bbl_daily_'+uid,[]),stk=0,x=daily.indexOf(d)>-1?d:d-1;
+  Object.keys(t).forEach(function(k){total+=t[k]});Object.keys(D).forEach(function(f){tot+=D[f].length;done+=(p[f]||[]).length});while(daily.indexOf(x)>-1){stk++;x--}
+  var today=t[d]||0,pct=Math.min(100,Math.round(today/(st.goal*60)*100)),days=[],mx=1;
+  for(i=6;i>=0;i--){var m=Math.round((t[d-i]||0)/60);days.push([new Date(Date.now()-i*864e5).toLocaleDateString(undefined,{weekday:'short'}),m]);mx=Math.max(mx,m)}
+  function stat(e,l,v,sub){return '<div class="pstat"><small>'+e+' '+l+'</small><b>'+v+'</b><small>'+sub+'</small></div>'}
+  pg.innerHTML='<div class="phead"><div class="av pav" id="pf_av"></div><div><h2 id="pf_h" style="margin:0;font-family:Georgia,serif"></h2><div id="pf_mail" style="opacity:.92"></div><small id="pf_since"></small></div></div>'+
+  '<div class="pstats">'+stat('⏱','Time spent',fmt(total),'Today: '+fmt(today))+stat('📖','Lessons done',done+' / '+tot,Math.round(done/tot*100)+'% complete')+stat('🔥','Day streak',stk+(stk===1?' day':' days'),'Daily lessons in a row')+stat('🛠','Projects',projs.length,'Saved designs')+'</div>'+
+  '<div class="pbox"><h3>Today\'s goal</h3><div class="bar"><i style="width:'+pct+'%"></i></div><small>'+fmt(today)+' of '+st.goal+' min'+(pct>=100?' 🎉 Goal reached!':'')+'</small></div>'+
+  '<div class="pbox"><h3>This week (minutes)</h3><div class="wk">'+days.map(function(a){return '<div><i style="height:'+Math.max(3,Math.round(a[1]/mx*90))+'px"></i>'+a[1]+'<br>'+a[0]+'</div>'}).join('')+'</div></div>'+
+  '<div class="pbox"><h3>Lessons by field</h3>'+Object.keys(N).map(function(f){var c=(p[f]||[]).length,q=p['q_'+f];return '<div class="frow"><span>'+N[f]+'</span><div class="bar"><i style="width:'+Math.round(c/D[f].length*100)+'%"></i></div><span>'+c+'/'+D[f].length+(q===QZ[f].length?' 🏅':'')+'</span></div>'}).join('')+'</div>'+
+  '<div class="pbox"><h3>My projects</h3><div id="pf_list"></div></div>'+
+  '<div class="pbox"><h3>Settings</h3>'+
+  '<div class="set"><span>Display name</span><span><input class="pinp" id="pf_name" maxlength="40"> <button class="pbtn" id="pf_save">Save</button></span></div>'+
+  '<div class="set"><span>Theme</span><span id="pf_theme"></span></div>'+
+  '<div class="set"><span>Daily goal</span><select class="pinp" id="pf_goal">'+[5,10,15,20,30,45,60].map(function(g){return '<option value="'+g+'"'+(g===st.goal?' selected':'')+'>'+g+' minutes</option>'}).join('')+'</select></div>'+
+  '<div class="set"><span>Change password</span><span><input class="pinp" type="password" id="pf_cur" placeholder="Current"> <input class="pinp" type="password" id="pf_new" placeholder="New (8+ chars)"> <button class="pbtn" id="pf_pw">Change</button></span></div>'+
+  '<div class="set"><span>Your data</span><span><button class="pbtn gray" id="pf_exp">Export</button> <button class="pbtn gray" id="pf_reset">Reset progress</button></span></div>'+
+  '<div class="set"><span>Account</span><span><button class="pbtn" id="pf_out">Log out</button> <button class="pbtn red" id="pf_del">Delete account</button></span></div>'+
+  '<p class="note" id="pf_msg" role="status"></p></div>';
+  var $=function(id){return document.getElementById(id)},msg=function(t){$('pf_msg').textContent=t};
+  $('pf_av').textContent=uname.charAt(0).toUpperCase();$('pf_h').textContent=uname;$('pf_mail').textContent=uid==='guest'?'Not logged in':uid;$('pf_since').textContent='Member since '+new Date(jget(FK,Date.now())).toLocaleDateString();$('pf_name').value=uname;
+  var pl=$('pf_list');if(!projs.length)pl.innerHTML='<p class="note">Nothing saved yet. Go to Build, open the Design Studio, name your design and tap "Save to my projects".</p>';
+  projs.slice().reverse().forEach(function(pr,ri){var k=projs.length-1-ri,r=mk('div','prow'),nm=mk('div','nm','<b></b><br><small></small>'),b1=mk('button','pbtn','Open'),b2=mk('button','pbtn red','Delete');
+    nm.firstChild.textContent=pr.name;nm.lastChild.textContent=(MODES[pr.m]||pr.m)+' · '+pr.p.length+' parts · '+new Date(pr.t).toLocaleDateString();
+    b1.onclick=function(){mode=pr.m;sel=null;SD[pr.m]={p:pr.p.map(function(q){return {t:q[0],x:q[1],y:q[2]}}),w:pr.w.map(function(w){return w.slice()})};modeUI();$ && (document.getElementById('sname').value=pr.name);goPage('build','studio')};
+    b2.onclick=function(){if(confirm('Delete "'+pr.name+'"?')){projs.splice(k,1);jset(PRK,projs);profRefresh()}};r.appendChild(nm);r.appendChild(b1);r.appendChild(b2);pl.appendChild(r)});
+  var cur0=localStorage.getItem('bbl_theme')||'auto';[['auto','Auto'],['light','☀️ Light'],['dark','🌙 Dark']].forEach(function(o){var b=mk('button','chip'+(o[0]===cur0?' on':''),o[1]);b.onclick=function(){try{localStorage.setItem('bbl_theme',o[0])}catch(e){}applyTheme(o[0]);profRefresh()};$('pf_theme').appendChild(b)});
+  $('pf_goal').onchange=function(){st.goal=+this.value;jset(SK,st);profRefresh()};
+  $('pf_save').onclick=function(){var n=$('pf_name').value.trim();if(n.length<2)return msg('Please enter a name.');
+    var u=jget('bbl_users',{});if(u[uid])u[uid].name=n;jset('bbl_users',u);var ss=jget('bbl_session',null);if(ss){ss.name=n;jset('bbl_session',ss)}location.reload()};
+  $('pf_pw').onclick=async function(){var u=jget('bbl_users',{}),a=u[uid],c=$('pf_cur').value,n=$('pf_new').value;if(!a)return msg('Log in with an account to change the password.');
+    if(n.length<8||!/[A-Za-z]/.test(n)||!/\d/.test(n))return msg('New password needs 8+ characters with a letter and a number.');
+    try{var old=await hp(c,Uint8Array.from(atob(a.salt),function(ch){return ch.charCodeAt(0)}));if(old!==a.hash)return msg('Current password is wrong.');
+      var salt=crypto.getRandomValues(new Uint8Array(16));a.salt=b64(salt);a.hash=await hp(n,salt);jset('bbl_users',u);$('pf_cur').value=$('pf_new').value='';msg('Password changed ✓')}catch(e){msg('Could not change the password.')}};
+  $('pf_exp').onclick=function(){var l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify({name:uname,email:uid,progress:p,minutesByDay:t,projects:projs,dailyDays:daily},null,1)],{type:'application/json'}));l.download='buildbot-data.json';l.click()};
+  $('pf_reset').onclick=function(){if(confirm('Reset all lesson progress, streak and time? Projects stay.')){['bbl_prog_','bbl_recent_','bbl_daily_','bbl_time_','bbl_field_'].forEach(function(k){localStorage.removeItem(k+uid)});profRefresh()}};
+  $('pf_out').onclick=function(){localStorage.removeItem('bbl_session');location.href='login.html'};
+  $('pf_del').onclick=function(){if(uid==='guest')return msg('There is no account to delete.');if(!confirm('Delete your account and all saved data on this device? This cannot be undone.'))return;
+    var u=jget('bbl_users',{});delete u[uid];jset('bbl_users',u);Object.keys(localStorage).forEach(function(k){if(k.indexOf('bbl_')===0&&k.slice(-uid.length)===uid)localStorage.removeItem(k)});localStorage.removeItem('bbl_session');location.href='login.html'}
+};
+profRefresh();
+})();
+
+(function(){
+var S=null;try{S=JSON.parse(localStorage.getItem('bbl_session')||'null')}catch(e){}
+var uid=(S&&S.email)||'guest',uname=(S&&S.name)||'maker',role=(S&&S.role)||'student',CK='bbl_classes_'+uid,JK='bbl_join_'+uid,selC=null,notice='',pg=document.getElementById('pg-class');
+function jget(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function jset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function dayNo(){return Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5)}
+function fmt(sec){var m=Math.round(sec/60);return m<60?m+' min':Math.floor(m/60)+' h '+(m%60)+' min'}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function enc(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function dec(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))))}
+function rid(n){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r='';for(var i=0;i<n;i++)r+=c.charAt(Math.floor(Math.random()*c.length));return r}
+function base(){return location.href.split('#')[0]}
+function pick(t,key){t=(t||'').trim();var i=t.indexOf(key+'=');return i>-1?t.slice(i+key.length+1).split(/[\s&]/)[0]:t}
+function today(){return new Date().toLocaleDateString('en-CA')}
+function $(id){return document.getElementById(id)}
+function copy(t,b){var ok=function(){var o=b.textContent;b.textContent='Copied ✓';setTimeout(function(){b.textContent=o},1500)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,function(){prompt('Copy this:',t)});else prompt('Copy this:',t)}
+function share(t,b){if(navigator.share){navigator.share({title:'BuildBot Lab',text:'BuildBot Lab',url:t}).catch(function(){})}else copy(t,b)}
+function lessonTitle(k,i){return D[k]&&D[k][i]?D[k][i].split('|')[0]:'Lesson'}
+function aTitle(a){return a.k?lessonTitle(a.k,a.i):a.ti}
+/* ----- reports ----- */
+function buildReport(email){var j=jget('bbl_join_'+email,null);if(!j)return null;var us=jget('bbl_users',{}),p=jget('bbl_prog_'+email,{}),t=jget('bbl_time_'+email,{}),dl=jget('bbl_daily_'+email,[]),d=dayNo(),tot=0,wk=[],q={},ld={},i,st=0,x=dl.indexOf(d)>-1?d:d-1;
+  Object.keys(t).forEach(function(k){tot+=t[k]});for(i=6;i>=0;i--)wk.push(Math.round((t[d-i]||0)/60));
+  Object.keys(p).forEach(function(k){if(k.indexOf('q_')===0)q[k.slice(2)]=p[k];else ld[k]=p[k]});while(dl.indexOf(x)>-1){st++;x--}
+  var ad=(j.a||[]).filter(function(a){return a.k?(ld[a.k]||[]).indexOf(a.i)>-1:(j.ad||[]).indexOf(a.id)>-1}).map(function(a){return a.id});
+  return {c:j.c,e:email,n:(us[email]&&us[email].name)||j.me||email,t:Date.now(),m:tot,wk:wk,ld:ld,q:q,ad:ad,s:st}}
+function importReport(code){var r;try{r=dec(code)}catch(e){return 'That report code does not look right.'}
+  if(!r||!r.c||!r.e)return 'That report code does not look right.';var a=jget(CK,[]),c=a.filter(function(x){return x.code===r.c})[0];
+  if(!c)return 'No class with code '+r.c+' on this account.';c.st=c.st||{};if(!c.st[r.e]||c.st[r.e].t<=r.t)c.st[r.e]=r;jset(CK,a);selC=c.id;return 'Added '+r.n+' to '+c.name+' ✓'}
+function doJoin(code){var o;try{o=dec(code)}catch(e){return 'That join code does not look right.'}
+  if(!o||!o.c||!o.a)return 'That join code does not look right.';var j=jget(JK,null);
+  if(j&&j.c!==o.c&&!confirm('Switch from "'+j.n+'" to "'+o.n+'"?'))return 'Join cancelled.';
+  jset(JK,{c:o.c,n:o.n,t:o.t,a:o.a,ad:(j&&j.c===o.c)?(j.ad||[]):[],me:uname,at:Date.now()});return 'Joined '+o.n+' ✓'}
+/* ----- student ----- */
+function sAssign(j){var p=jget('bbl_prog_'+uid,{});return (j.a||[]).map(function(x){return {x:x,done:x.k?(p[x.k]||[]).indexOf(x.i)>-1:(j.ad||[]).indexOf(x.id)>-1}})}
+function dueTxt(x,done){if(!x.d)return '';return ' · Due '+x.d+(!done&&x.d<today()?' ⚠️ overdue':'')}
+function aRow(o,after){var x=o.x,r=document.createElement('button');r.className='lrow';
+  r.innerHTML='<span class="st">'+(o.done?'★':'☆')+'</span><div><div class="tt">'+esc(aTitle(x))+'</div><small>'+(x.k?esc(N[x.k])+' · Lesson '+(x.i+1):'Task from your teacher')+esc(dueTxt(x,o.done))+(x.no?' · '+esc(x.no):'')+'</small></div><span class="ic">'+(x.k?'📖':'📝')+'</span>';
+  r.onclick=function(){if(x.k)BB.openL(x.k,x.i);else{var j=jget(JK,null);j.ad=j.ad||[];var n=j.ad.indexOf(x.id);if(n>-1)j.ad.splice(n,1);else j.ad.push(x.id);jset(JK,j);after()}};return r}
+window.ClassAPI={fill:function(body){var j=jget(JK,null);if(role==='teacher'){body.innerHTML='<p class="note">You are a teacher. Open the Classroom tab to manage classes.</p>';return}
+  if(!j){body.innerHTML='<p class="note">You have not joined a class yet. Ask your teacher for a join link or code.</p>';var b=document.createElement('button');b.className='cta';b.textContent='Join a class ›';b.onclick=function(){goPage('class')};body.appendChild(b);return}
+  var h=document.createElement('p');h.className='note';h.textContent=j.n+' · Teacher '+(j.t||'');body.appendChild(h);
+  var list=sAssign(j);if(!list.length)body.innerHTML+='<p class="note">No assignments yet.</p>';
+  list.forEach(function(o){body.appendChild(aRow(o,function(){dashRefresh()}))})}};
+function renderS(){var j=jget(JK,null),h='';
+  if(!j){h='<div class="pbox"><h3>🎒 Join a class</h3><p class="note">Paste the join link or code your teacher shared. If you opened a link, you will join automatically.</p><textarea class="pinp" id="cl_code" style="width:100%;min-height:80px" placeholder="Paste join link or code"></textarea><p><button class="pbtn" id="cl_join">Join class</button></p></div>'}
+  else{var list=sAssign(j),dn=list.filter(function(o){return o.done}).length;
+    h='<div class="phead"><div class="av pav">🎒</div><div><h2 style="margin:0;font-family:Georgia,serif">'+esc(j.n)+'</h2><div>Teacher: '+esc(j.t||'')+'</div><small>'+dn+' of '+list.length+' assignments done</small></div></div>'+
+    '<div class="pbox"><h3>Assignments</h3><div class="bar"><i style="width:'+(list.length?Math.round(dn/list.length*100):0)+'%"></i></div><div id="cl_list"></div></div>'+
+    '<div class="pbox"><h3>Send my progress</h3><p class="note">Your teacher sees your time, lessons and assignments only when you send this link.</p><button class="pbtn" id="cl_send">Share with my teacher</button> <button class="pbtn gray" id="cl_copy">Copy link</button></div>'+
+    '<div class="pbox"><h3>Class options</h3><textarea class="pinp" id="cl_code" style="width:100%;min-height:60px" placeholder="Paste an updated join link"></textarea><p><button class="pbtn" id="cl_join">Update class</button> <button class="pbtn red" id="cl_leave">Leave class</button></p></div>'}
+  pg.innerHTML=(notice?'<p class="note" style="font-weight:700">'+esc(notice)+'</p>':'')+h;notice='';
+  if(j){var cl=$('cl_list');sAssign(j).forEach(function(o){cl.appendChild(aRow(o,renderS))});if(!sAssign(j).length)cl.innerHTML='<p class="note">No assignments yet.</p>';
+    var link=function(){return base()+'#report='+enc(buildReport(uid))};$('cl_send').onclick=function(){share(link(),this)};$('cl_copy').onclick=function(){copy(link(),this)};
+    $('cl_leave').onclick=function(){if(confirm('Leave this class?')){localStorage.removeItem(JK);renderS()}}}
+  $('cl_join').onclick=function(){notice=doJoin(pick($('cl_code').value,'join'));renderS()}}
+/* ----- teacher ----- */
+function renderT(){var a=jget(CK,[]),c=a.filter(function(x){return x.id===selC})[0]||a[0]||null,h='';if(c)selC=c.id;
+  h+='<div class="pbox"><h3>🏫 My classes</h3><div class="chips" id="cl_tabs"></div><p style="margin-top:12px"><input class="pinp" id="cl_nm" maxlength="40" placeholder="New class name"> <button class="pbtn" id="cl_new">Create class</button></p></div>';
+  if(c){var st=Object.keys(c.st||{}).map(function(k){return c.st[k]}).sort(function(x,y){return x.n.localeCompare(y.n)}),ts=0,ls=0,ds=0,tot=0;Object.keys(D).forEach(function(f){tot+=D[f].length});
+    st.forEach(function(r){ts+=r.m;Object.keys(r.ld).forEach(function(k){ls+=r.ld[k].length});ds+=c.assign.filter(function(x){return r.ad.indexOf(x.id)>-1}).length});
+    var n=st.length||1,link=base()+'#join='+enc({c:c.code,n:c.name,t:uname,a:c.assign});
+    h+='<div class="phead"><div class="av pav">🏫</div><div><h2 style="margin:0;font-family:Georgia,serif">'+esc(c.name)+'</h2><div>Class code: <b>'+esc(c.code)+'</b></div><small>'+st.length+' students · avg '+fmt(ts/n)+' · avg '+Math.round(ls/n)+' lessons</small></div></div>'+
+    '<div class="pbox"><h3>1. Invite students</h3><p class="note">Send this join link. Students open it, log in, and they are in. Re-send it after you change assignments.</p><input class="pinp" id="cl_link" readonly style="width:100%" value="'+esc(link)+'"><p><button class="pbtn" id="cl_share">Share link</button> <button class="pbtn gray" id="cl_cplink">Copy link</button></p></div>'+
+    '<div class="pbox"><h3>2. Assign work</h3><div id="cl_alist"></div><div class="set"><span>Lesson</span><span><select class="pinp" id="cl_f"></select> <select class="pinp" id="cl_l"></select></span></div>'+
+    '<div class="set"><span>Due / note</span><span><input class="pinp" type="date" id="cl_d"> <input class="pinp" id="cl_n" maxlength="60" placeholder="Note (optional)"> <button class="pbtn" id="cl_addl">Assign lesson</button></span></div>'+
+    '<div class="set"><span>Custom task</span><span><input class="pinp" id="cl_ct" maxlength="60" placeholder="e.g. Build a bridge that holds 2000 kg"> <button class="pbtn" id="cl_addc">Assign task</button></span></div></div>'+
+    '<div class="pbox"><h3>3. Student progress</h3><p class="note">Students send you a report link. Open it while logged in, or paste it below. On a shared device, tap Scan.</p><textarea class="pinp" id="cl_rep" style="width:100%;min-height:60px" placeholder="Paste a student report link or code"></textarea><p><button class="pbtn" id="cl_imp">Add report</button> <button class="pbtn gray" id="cl_scan">Scan this device</button></p><div id="cl_roster"></div></div>'+
+    '<div class="pbox"><button class="pbtn red" id="cl_del">Delete this class</button></div>'}
+  pg.innerHTML=(notice?'<p class="note" style="font-weight:700">'+esc(notice)+'</p>':'')+h;notice='';
+  var tb=$('cl_tabs');a.forEach(function(x){var b=document.createElement('button');b.className='chip'+(c&&x.id===c.id?' on':'');b.textContent=x.name;b.onclick=function(){selC=x.id;renderT()};tb.appendChild(b)});
+  if(!a.length)tb.innerHTML='<span class="note">No classes yet. Create your first one below.</span>';
+  $('cl_new').onclick=function(){var nm=$('cl_nm').value.trim();if(nm.length<2)return;var o={id:rid(6),name:nm,code:rid(6),assign:[],st:{}};a.push(o);jset(CK,a);selC=o.id;renderT()};
+  if(!c)return;
+  $('cl_share').onclick=function(){share($('cl_link').value,this)};$('cl_cplink').onclick=function(){copy($('cl_link').value,this)};
+  var al=$('cl_alist');if(!c.assign.length)al.innerHTML='<p class="note">No assignments yet.</p>';
+  c.assign.forEach(function(x,i){var r=document.createElement('div'),b=document.createElement('button');r.className='prow';r.innerHTML='<div class="nm"><b>'+esc(aTitle(x))+'</b><br><small>'+(x.k?esc(N[x.k]):'Custom task')+esc(dueTxt(x,true))+(x.no?' · '+esc(x.no):'')+'</small></div>';
+    b.className='pbtn red';b.textContent='Remove';b.onclick=function(){c.assign.splice(i,1);jset(CK,a);renderT()};r.appendChild(b);al.appendChild(r)});
+  var sf=$('cl_f'),sl=$('cl_l');Object.keys(N).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=N[k];sf.appendChild(o)});
+  function fillL(){sl.innerHTML='';D[sf.value].forEach(function(t,i){var o=document.createElement('option');o.value=i;o.textContent=(i+1)+'. '+t.split('|')[0];sl.appendChild(o)})}sf.onchange=fillL;fillL();
+  $('cl_addl').onclick=function(){c.assign.push({id:rid(5),k:sf.value,i:+sl.value,d:$('cl_d').value,no:$('cl_n').value.trim()});jset(CK,a);renderT()};
+  $('cl_addc').onclick=function(){var t=$('cl_ct').value.trim();if(!t)return;c.assign.push({id:rid(5),k:null,ti:t,d:$('cl_d').value,no:$('cl_n').value.trim()});jset(CK,a);renderT()};
+  $('cl_imp').onclick=function(){notice=importReport(pick($('cl_rep').value,'report'));renderT()};
+  $('cl_scan').onclick=function(){var cnt=0;Object.keys(localStorage).forEach(function(k){if(k.indexOf('bbl_join_')!==0)return;var e=k.slice(9),j=jget(k,null);if(j&&j.c===c.code){var r=buildReport(e);if(r){c.st[e]=r;cnt++}}});jset(CK,a);notice='Found '+cnt+' student(s) on this device.';renderT()};
+  $('cl_del').onclick=function(){if(confirm('Delete "'+c.name+'" and its student reports?')){a.splice(a.indexOf(c),1);jset(CK,a);selC=null;renderT()}};
+  var ro=$('cl_roster');if(!st.length)ro.innerHTML='<p class="note">No student reports yet.</p>';
+  st.forEach(function(r){var lc=0,dn=c.assign.filter(function(x){return r.ad.indexOf(x.id)>-1}).length,age=Math.floor((Date.now()-r.t)/864e5),d=document.createElement('details');d.className='sdet';Object.keys(r.ld).forEach(function(k){lc+=r.ld[k].length});
+    var bars=Object.keys(N).filter(function(k){return (r.ld[k]||[]).length}).map(function(k){var q=(r.ld[k]||[]).length;return '<div class="frow"><span>'+esc(N[k])+'</span><div class="bar"><i style="width:'+Math.round(q/D[k].length*100)+'%"></i></div><span>'+q+'/'+D[k].length+(r.q[k]!==undefined?' · quiz '+r.q[k]:'')+'</span></div>'}).join('');
+    var as=c.assign.map(function(x){return '<div>'+(r.ad.indexOf(x.id)>-1?'✅':'⬜')+' '+esc(aTitle(x))+'</div>'}).join('');
+    d.innerHTML='<summary><b>'+esc(r.n)+'</b> · ⏱ '+fmt(r.m)+' · 📖 '+lc+'/'+tot+' · ✅ '+dn+'/'+c.assign.length+' · 🔥 '+r.s+(age>=3?' · ⚠️ updated '+age+' days ago':'')+'</summary>'+
+    '<p class="note">Minutes, last 7 days: '+r.wk.join(', ')+' · Report sent '+new Date(r.t).toLocaleDateString()+'</p>'+(bars||'<p class="note">No lessons finished yet.</p>')+(as?'<p><b>Assignments</b></p>'+as:'');
+    var rm=document.createElement('button');rm.className='pbtn red';rm.style.marginTop='10px';rm.textContent='Remove student';rm.onclick=function(){delete c.st[r.e];jset(CK,a);renderT()};d.appendChild(rm);ro.appendChild(d)})}
+window.classRefresh=function(){if(role==='teacher')renderT();else renderS()};
+/* ----- setup ----- */
+var tb=document.querySelector('.tn[data-p="class"]');if(tb)tb.innerHTML='<span>'+(role==='teacher'?'🏫':'🎒')+'</span>'+(role==='teacher'?'Classroom':'My class');
+if(role==='teacher'){var dt=document.querySelector('.dt[data-t="teacher"]');if(dt)dt.style.display='none'}
+var hs=location.hash||'';try{if(!hs)hs=localStorage.getItem('bbl_pending')||''}catch(e){}
+if(/^#(join|report)=/.test(hs)){try{localStorage.removeItem('bbl_pending')}catch(e){}
+  if(hs.indexOf('#join=')===0)notice=role==='student'?doJoin(hs.slice(6)):'That is a student join link. You are logged in as a teacher.';
+  else notice=role==='teacher'?importReport(hs.slice(8)):'That is a teacher report link. You are logged in as a student.';
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}goPage('class')}
+classRefresh();
+})();
+loadPlaza();
+</script>
+</body>
+</html>
